@@ -1,0 +1,200 @@
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+    <cdk-accordion class="example-accordion">
+        <div class="row btn-row" *ngIf="sections.length === 0">
+            <button type="button" class="btn btn-primary" (click)="addModal('sections', 0)">Add Section</button>
+        </div>
+        <cdk-accordion-item cdkDrag *ngFor="let item of sections; let sectionIndex = index;" #accordionItem="cdkAccordionItem" class="example-box example-accordion-item" role="button" tabindex="0" [attr.id]="'accordion-header-' + sectionIndex" [attr.aria-expanded]="accordionItem.expanded" [attr.aria-controls]="'accordion-body-' + sectionIndex">
+            <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+            <div class="row example-accordion-item-header example-accordion-item-header" (click)="accordionItem.toggle()">
+                <h4>{{ item.name }}
+                    <span class="example-accordion-item-description" style="float: right;">
+                        <!-- Click to {{ accordionItem.expanded ? 'close' : 'add questions' }} -->
+                        <i class="ri-drag-move-2-fill label-icon align-middle fs-16 me-2"></i>
+                    </span>
+                </h4>
+                <!-- <span><p class="example-accordion-item-description">{{item.description}}</p></span> -->
+                <div class="col-12">
+                    <table class="table table-responsive" style="margin-top: 1rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="header-section">
+                                    {{ item.title }}
+                                    <span style="float: right;">
+                                        <i class="ri-arrow-down-s-fill label-icon align-middle fs-16 me-2" *ngIf="!accordionItem.expanded"></i>
+                                        <i class="ri-arrow-up-s-fill label-icon align-middle fs-16 me-2" *ngIf="accordionItem.expanded"></i>
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- <p class="text-muted" style="padding-left: 7px;">{{ item.description }}</p> -->
+                            <p style="padding-left: 7px;" [sanitizeHtml]="item.description" style="text-align: left;"></p>
+                        </div>
+                        <div class="col-md-6" style="text-align: right;">
+                            <div class="btn-group" ngbDropdown *ngIf="editable">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle (click)="$event.stopPropagation(); accordionItem.expanded = true">Action</button>
+                                <div class="dropdown-menu dropdownmenu-primary" ngbDropdownMenu>
+                                    <a class="dropdown-item" href="javascript: void(0);" (click)="$event.stopPropagation(); addModal('questions', sectionIndex); accordionItem.expanded = true">
+                                        <span class="d-flex align-items-center">
+                                            <span class="flex-grow-1 me-2" style="margin: 0px !important;"> Add Question </span>
+                                        </span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript: void(0);" (click)="$event.stopPropagation(); addModal('usections', sectionIndex)">
+                                        <span class="d-flex align-items-center">
+                                            <span class="flex-grow-1 me-2" style="margin: 0px !important;"> Update Section </span>
+                                        </span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript: void(0);" (click)="$event.stopPropagation(); deleteSQ('section',sectionIndex)">
+                                        <span class="d-flex align-items-center">
+                                            <span class="flex-grow-1 me-2" style="margin: 0px !important;"> Delete Section </span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="example-accordion-item-body" role="region" [style.display]="accordionItem.expanded ? '' : 'none'" [attr.id]="'accordion-body-' + sectionIndex" [attr.aria-labelledby]="'accordion-header-' + sectionIndex">
+                <div cdkDropList class="example-list" (cdkDropListDropped)="dropQuestions($event, sectionIndex)">
+                    <div class="example-box" *ngFor="let question of item.questions; let questionIndex = index;" cdkDrag>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 1">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <input type="date" id="name-field" class="form-control" [disabled]="true" />
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 2">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <input type="text" id="name-field" class="form-control" [disabled]="true" />
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 3">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <input type="number" id="name-field" class="form-control" [disabled]="true" placeholder="0.5"/>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 4">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8" style="margin-top: 0.75em;">
+                                <div class="form-check-inline question-options" *ngFor="let option of question.options; let optIndex = index">
+                                    <input class="form-check-input" type="radio" [disabled]="true">
+                                    <label class="form-check-label">
+                                      {{ option.text }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 5">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8" style="margin-top: 0.75em;">
+                                <div class="form-check-inline question-options" *ngFor="let option of question.options; let optIndex = index">
+                                    <input class="form-check-input" type="checkbox" [disabled]="true">
+                                    <label class="form-check-label">
+                                      {{ option.text }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 6">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8" style="margin-top: 0.75em;">
+                                <input type="range" id="name-field" class="form-control" [disabled]="true" />
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 7">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <input type="file" class="form-control" accept="image/png, image/gif, image/jpeg" multiple>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 8">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <input type="file" class="form-control" multiple>
+                            </div>
+                        </div>
+                        <div class="row mb-3 question-row" *ngIf="question.questionTypeId === 9">
+                            <div class="col-lg-12 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div style="padding-left: 0.5em;">
+                                    <!-- <app-signature-pad></app-signature-pad> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3 question-row" *ngIf="question.questionTypeId === 10">
+                            <div class="col-lg-12 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div style="padding-left: 0.5em;">
+                                    <!-- <app-signature-pad></app-signature-pad> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 11">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <h4>Information</h4>
+                            </div>
+                        </div>
+                        <div class="row question-row" *ngIf="question.questionTypeId === 12">
+                            <div class="col-lg-4 user-form-label">
+                                <label for="name-field" class="form-label" [sanitizeHtml]="question.description">{{ question.description }}</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <ngb-rating [readonly]="true" class="stars" [max]=5></ngb-rating>
+                            </div>
+                        </div>
+                        <!-- {{question.description}}  -->
+                        <span>
+                            <!-- <div class="btn-group" ngbDropdown><button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle (click)="$event.stopPropagation()">Action</button><div class="dropdown-menu dropdownmenu-primary" ngbDropdownMenu ><a class="dropdown-item" href="javascript: void(0);" (click)="$event.stopPropagation()"><span class="d-flex align-items-center"><span class="flex-grow-1 me-2" style="margin: 0px !important;"> Edit Question </span></span></a><a class="dropdown-item" href="javascript: void(0);" (click)="deleteSQ('question', sectionIndex, questionIndex)"><span class="d-flex align-items-center"><span class="flex-grow-1 me-2" style="margin: 0px !important;"> Delete Question </span></span></a></div></div> -->
+                            <!-- <button type="button" class="btn btn-primary w-sm update-btn" (click)="addModal('uquestions', sectionIndex, questionIndex);">Update</button> -->
+                            <!-- <button type="button" class="btn btn-danger w-sm" (click)="deleteSQ('question', sectionIndex, questionIndex)">Delete</button> -->
+                            <div class="btn-group" ngbDropdown *ngIf="editable">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle (click)="$event.stopPropagation(); accordionItem.expanded = true">Action</button>
+                                <div class="dropdown-menu dropdownmenu-primary" ngbDropdownMenu>
+                                    <a class="dropdown-item" href="javascript: void(0);">
+                                        <span class="d-flex align-items-center">
+                                            <span class="flex-grow-1 me-2" style="margin: 0px !important;" (click)="addModal('uquestions', sectionIndex, questionIndex)"> Update </span>
+                                        </span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript: void(0);" (click)="deleteSQ('question', sectionIndex, questionIndex)">
+                                        <span class="d-flex align-items-center">
+                                            <span class="flex-grow-1 me-2" style="margin: 0px !important;"> Delete </span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </cdk-accordion-item>
+     
+    </cdk-accordion>
+</div>

@@ -1,0 +1,165 @@
+<app-section-header [title]="'Job Details'"></app-section-header>
+
+<ng-container *ngIf="!isCreate">
+    <div class="table-responsive" *ngIf="jobNotes && jobNotes.length > 0; else noNotesTemplate">
+        <table class="table align-middle table-nowrap mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" style="width: 150px;">Date</th>
+                    <th scope="col">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let note of jobNotes">
+                    <td [class.text-danger]="!note.date">
+                        {{ note.date ? (note.date | date: 'dd/MM/yyyy HH:mm') : 'No Date' }}
+                    </td>
+                    <td [class.text-danger]="!note.note">
+                        {{ note.note || 'No Data' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- No Notes Template -->
+    <ng-template #noNotesTemplate>
+        <div class="text-center py-5">
+            <i class="ri-sticky-note-line display-4 text-muted mb-3"></i>
+            <h6 class="text-muted">No Job Notes Found</h6>
+            <p class="text-muted small">No notes have been added to this job yet.</p>
+        </div>
+    </ng-template>
+</ng-container>
+
+<ng-container *ngIf="isCreate">
+    <div class="card">
+        
+        <div class="card-body">
+            <form [formGroup]="jobDetailsForm" (ngSubmit)="onSubmit()">
+            
+            <!-- Title Field -->
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                <label for="title-field" class="form-label">Title: <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-8">
+                <input type="text" 
+                        id="title-field" 
+                        class="form-control" 
+                        required 
+                        formControlName="Title" 
+                        [ngClass]="{ 'is-invalid': submittedDetails && jobDetailsFormControl['Title'].errors }"
+                        placeholder="Enter job title"/>
+                <div *ngIf="submittedDetails && jobDetailsFormControl['Title'].errors" class="invalid-feedback" align="left">
+                    <div *ngIf="jobDetailsFormControl['Title'].errors['required']">Title is required</div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Special Requirements Field -->
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                <label for="requirements-field" class="form-label">Special Requirements:</label>
+                </div>
+                <div class="col-lg-8">
+                <textarea id="requirements-field" 
+                            class="form-control" 
+                            rows="3"
+                            formControlName="SpecialRequirements"
+                            placeholder="Enter any special requirements or notes"></textarea>
+                </div>
+            </div>
+
+            <!-- Due Date Field -->
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                <label for="due-date-field" class="form-label">Due Date: <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-8">
+                <input type="date" 
+                        id="due-date-field" 
+                        class="form-control" 
+                        required 
+                        formControlName="DueDate" 
+                        [ngClass]="{ 'is-invalid': submittedDetails && jobDetailsFormControl['DueDate'].errors }"/>
+                <div *ngIf="submittedDetails && jobDetailsFormControl['DueDate'].errors" class="invalid-feedback" align="left">
+                    <div *ngIf="jobDetailsFormControl['DueDate'].errors['required']">Due Date is required</div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Job Recurring Toggle -->
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                <label for="recurring-switch" class="form-label">Job Recurring:</label>
+                </div>
+                <div class="col-lg-8">
+                <div class="form-check form-switch form-switch-lg" dir="ltr">
+                    <input type="checkbox" 
+                        class="form-check-input" 
+                        id="recurring-switch" 
+                        formControlName="Recurring" 
+                        (change)="jobRecurring($event)">
+                    <label class="form-check-label" for="recurring-switch">
+                    Enable recurring job
+                    </label>
+                </div>
+                </div>
+            </div>
+
+            <!-- Job Lifespan (Frequency) -->
+            <div class="row mb-3" *ngIf="!isDueDateManual">
+                <div class="col-lg-2 text-align-right">
+                <label class="form-label">Job Lifespan:</label>
+                </div>
+                <div class="col-lg-8">
+                <ng-select class="custom form-control" 
+                            [items]="jobFrequency" 
+                            bindLabel="name" 
+                            bindValue="days" 
+                            formControlName="jobLifespan"
+                            placeholder="Select frequency">
+                </ng-select>
+                </div>
+            </div>
+
+            <!-- Next Due Date (Manual) -->
+            <div class="row mb-3" *ngIf="isDueDateManual">
+                <div class="col-lg-2 text-align-right">
+                <label class="form-label">Next Due Date:</label>
+                </div>
+                <div class="col-lg-8">
+                <input type="date" 
+                        id="next-due-date-field" 
+                        class="form-control" 
+                        formControlName="NextDueDate"/>
+                </div>
+            </div>
+
+            <!-- Toggle Buttons for Date Selection -->
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                <button type="button" 
+                        class="btn btn-outline-primary btn-sm" 
+                        *ngIf="!isDueDateManual"
+                        (click)="isDueDateManual = true; setLifespanToNull()">
+                    <i class="ri-calendar-line me-1"></i>Enter Manually
+                </button>
+                <button type="button" 
+                        class="btn btn-outline-primary btn-sm" 
+                        *ngIf="isDueDateManual"
+                        (click)="isDueDateManual = false; setNextDueDateToNull()">
+                    <i class="ri-time-line me-1"></i>Choose Frequency
+                </button>
+                </div>
+                <div class="col-lg-8">
+                <small class="text-muted">
+                    {{ isDueDateManual ? 'Set a specific next due date' : 'Select from predefined frequencies' }}
+                </small>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

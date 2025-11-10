@@ -1,0 +1,157 @@
+.form-label {
+    line-height: 3em;
+}
+
+.form-values {
+    padding-top: 8px;
+}
+
+.wrapper {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+  
+.signature-pad {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:400px;
+    height:200px;
+    background-color: white;
+}
+
+:host ::ng-deep canvas {
+    border: 1px solid #A1A3AF;
+}
+
+.survey-attachments {
+    width: 40em;
+    border: 1px solid black;
+    margin: 2px;
+}
+
+
+.spinner-border {
+    width: 18px !important;
+    height: 18px !important;
+    left: calc(90% - 1rem);
+    top: 24%;
+}
+
+.no-container {
+    width: 100%;
+}
+
+.selected-no-input {
+    width: 50%;
+    height: 3em;
+}
+
+.section-header {
+  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+
+  h5 {
+    color: #495057;
+    margin: 0;
+    
+    i {
+      color: #6c757d;
+    }
+  }
+}
+
+.equipment-check-item {
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  margin: 0 2em;
+
+  &:hover {
+    border-color: #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .form-label {
+    margin-bottom: 0.5rem;
+    color: #495057;
+  }
+}
+
+.current-location-info {
+  margin: 0 2em;
+  strong {
+    color: #495057;
+  }
+}
+
+.radio-group {
+  display: flex;
+  gap: 1rem;
+  
+  .form-check {
+    margin: 0;
+  }
+}
+
+.correction-input {
+  margin-top: 0.75rem;
+  
+  .form-control {
+    border-radius: 6px;
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+    
+    &.is-invalid {
+      border-color: #dc3545;
+    }
+  }
+}
+
+.location-correction {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+// Make ng-select consistent with form styling
+::ng-deep {
+  .ng-select {
+    &.custom {
+      .ng-select-container {
+        border-radius: 6px;
+        min-height: 38px;
+      }
+      
+      &.is-invalid .ng-select-container {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 992px) {
+  .equipment-check-item {
+    .row > div:first-child {
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .radio-group {
+    justify-content: start;
+  }
+}

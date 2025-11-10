@@ -1,0 +1,109 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+    <div class="row" *ngIf="userRole === 'Manager'">
+        <form [formGroup]="usersForm">
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">First Name</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" formControlName="firstName" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Last Name</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" formControlName="lastName" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Email</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="email" class="form-control" id="email" placeholder="Enter Email" formControlName="email" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Phone Number</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" formControlName="phoneNumber" />
+                </div>
+            </div>
+            <div class="row mb-3" *ngIf="!isEditMode">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Password</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="password" class="form-control" id="password" placeholder="Enter Password" formControlName="password" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- <div class="row" *ngIf="userRole === 'SuperAdmin'">
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="nameInput" class="form-label">User Type</label>
+            </div>
+            <div class="col-lg-9">
+                <ng-select [items]="userType" bindLabel="type" [(ngModel)]="selectedUserType"></ng-select>
+            </div>
+        </div>
+        
+        <form [formGroup]="usersForm">
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">First Name</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" formControlName="firstName"/>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Last Name</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" formControlName="lastName" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Email</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="email" class="form-control" id="email" placeholder="Enter Email" formControlName="email" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Phone Number</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" formControlName="phoneNumber" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-3">
+                    <label for="nameInput" class="form-label">Password</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="password" class="form-control" id="password" placeholder="Enter Password" formControlName="password" />
+                </div>
+            </div>
+        </form>
+    </div> -->
+</div>
+<div class="modal-footer">
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary" (click)="updateUser()">
+            {{ isEditMode ? 'Update User' : 'Add User' }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+.table {
+    margin-bottom: 2em !important;
+}
+
+.question-column {
+    width: 45em;
+}
+
+.modal-footer {
+    display: block !important;
+}
+
+.btn-next {
+    float: right;
+}
+
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;  /* Full viewport height */
+  }
+  
+  .modal-body {
+    flex-grow: 1;
+    overflow-y: auto;  /* Enable vertical scrolling if needed */
+  }
+  
+  .modal-footer {
+    margin-top: auto;  /* Push the footer to the bottom */
+  }

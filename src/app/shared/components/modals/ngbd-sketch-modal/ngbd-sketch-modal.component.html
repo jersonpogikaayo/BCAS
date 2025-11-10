@@ -1,0 +1,122 @@
+<div class="sketch-modal-header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+      <div class="sketch-title">
+        <h5 class="mb-0">
+          <i class="ri-palette-line me-2"></i>
+          Create Sketch
+        </h5>
+        <small class="text-light opacity-75">Use touch, mouse, or stylus to draw</small>
+      </div>
+      
+      <!-- Drawing Tools -->
+      <div class="drawing-tools d-flex align-items-center gap-3" *ngIf="questionTypeId !== 9">
+        <!-- Brush Size -->
+        <div class="tool-group">
+          <label class="text-light small me-2">Size:</label>
+          <select class="form-select form-select-sm" 
+                  [(ngModel)]="brushSize" 
+                  (change)="updateBrushSize()"
+                  style="width: 80px;">
+            <option value="2">Fine</option>
+            <option value="5">Medium</option>
+            <option value="10">Thick</option>
+            <option value="20">Bold</option>
+          </select>
+        </div>
+        
+        <!-- Color Picker -->
+        <div class="tool-group">
+          <label class="text-light small me-2">Color:</label>
+          <input type="color" 
+                 class="form-control form-control-sm color-picker" 
+                 [(ngModel)]="brushColor"
+                 (change)="updateBrushColor()"
+                 style="width: 50px; height: 35px;">
+        </div>
+        
+        <!-- Quick Colors -->
+        <div class="quick-colors d-flex gap-1">
+          <button type="button" 
+                  class="btn btn-sm color-btn"
+                  *ngFor="let color of quickColors"
+                  [style.background-color]="color"
+                  [class.active]="brushColor === color"
+                  (click)="setQuickColor(color)"
+                  [title]="color">
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sketch-modal-body p-0 position-relative" style="height: calc(100vh - 120px);">
+      <!-- Canvas Container -->
+      <div class="canvas-container w-100 h-100 position-relative bg-white">
+        <canvas 
+          #sketchCanvas
+          class="sketch-canvas w-100 h-100"
+          style="cursor: crosshair; touch-action: none;">
+        </canvas>
+        
+        <!-- Canvas Overlay Info -->
+        <div class="canvas-info position-absolute top-0 start-0 m-3">
+          <small class="badge bg-light text-dark opacity-75">
+            <i class="ri-pencil-line me-1"></i>
+            Canvas: {{canvasWidth}}×{{canvasHeight}}
+          </small>
+        </div>
+        
+        <!-- Drawing Status -->
+        <div class="drawing-status position-absolute top-0 end-0 m-3" *ngIf="isDrawing">
+          <small class="badge bg-primary">
+            <i class="ri-brush-line me-1"></i>
+            Drawing...
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="sketch-modal-footer d-flex justify-content-between align-items-center p-3 bg-light border-top">
+      <!-- Left Actions -->
+      <div class="left-actions">
+        <button type="button" 
+                class="btn btn-outline-secondary me-2"
+                (click)="undoLastStroke()"
+                [disabled]="!canUndo"
+                *ngIf="questionTypeId !== 9">
+          <i class="ri-arrow-go-back-line me-1"></i>
+          Undo
+        </button>
+        
+        <button type="button" 
+                class="btn btn-outline-info"
+                (click)="toggleGrid()"
+                *ngIf="questionTypeId !== 9">
+          <i class="ri-grid-line me-1"></i>
+          {{ showGrid ? 'Hide Grid' : 'Show Grid' }}
+        </button>
+      </div>
+      
+      <!-- Right Actions -->
+      <div class="right-actions d-flex gap-2">
+        <button type="button" 
+                class="btn btn-outline-secondary"
+                (click)="cancelSketch()">
+          <i class="ri-close-line me-1"></i>
+          Cancel
+        </button>
+        
+        <button type="button" 
+                class="btn btn-outline-warning"
+                (click)="clearCanvas()">
+          <i class="ri-eraser-line me-1"></i>
+          Clear
+        </button>
+        
+        <button type="button" 
+                class="btn btn-success"
+                (click)="saveSketch()"
+                [disabled]="!hasDrawn">
+          <i class="ri-save-line me-2"></i>
+          Save {{ questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+        </button>
+      </div>
+    </div>

@@ -1,0 +1,78 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+    <div class="row h-100">
+        <div class="col-lg-2 h-100">
+            <div class="" role="tablist" aria-orientation="vertical">
+                <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                    <li [ngbNavItem]="0">
+                        <a ngbNavLink (click)="activeTab = 0" class="no-click">
+                            <i class="ri-user-2-line d-block fs-20 mb-1"></i> Department Details </a>
+                        <ng-template ngbNavContent>
+                            <form [formGroup]="departmentForm">
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="name" class="form-label">Name</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" formControlName="name" placeholder="Enter Department Name" />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="timeInput" class="form-label">Notes</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <textarea class="form-control" id="exampleFormControlTextarea5" rows="3" formControlName="notes"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </ng-template>
+                    </li>
+                    <li [ngbNavItem]="1">
+                        <a ngbNavLink (click)="activeTab = 1" class="no-click">
+                            <i class="ri-user-2-line d-block fs-20 mb-1"></i> Contacts </a>
+                        <ng-template ngbNavContent>
+                            <div class="card">
+                                <div class="card-header">
+                                    <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1.25em" (click)="addEditContact(null)">
+                                        <span class="flex-grow-1 me-2"> Add New Contact </span>
+                                    </button>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row mb-3">
+                                      <app-contacts-data-grid
+                                      [gridItems]="contactGridItems"
+                                      [columnHeader]="contactColumnHeader"
+                                      [totalItems]="contactTotalItems"
+                                      [currentPage]="contactCurrentPage"
+                                      [pageSize]="contactPageSize"
+                                      [loading]="contactLoading"
+                                      (refresh)="loadContactData(contactGridParameter)"
+                                      (searchData)="onContactSearch($event)"
+                                      (pageChanged)="onContactPageChanged($event)"
+                                      (pageSizeChanged)="onPageContactSizeChanged($event)"
+                                      (editContact)="addEditContact($event)"
+                                      ></app-contacts-data-grid>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-10 h-100">
+            <div class="tab-content text-muted mt-3 mt-lg-0 h-100" [ngbNavOutlet]="CustomVertical">
+                <!-- <div [ngbNavOutlet]="CustomVertical"></div> -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary" (click)="addDepartment()" *ngIf="activeTab === 0" [disabled]="departmentForm.invalid">Save Department Details</button>
+        <button type="submit" class="btn btn-primary" (click)="close()" *ngIf="activeTab === 1" [disabled]="departmentForm.invalid">Save Contacts</button>
+    </div>
+</div>

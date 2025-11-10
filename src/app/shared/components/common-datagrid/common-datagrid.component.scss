@@ -1,0 +1,189 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.search-box {
+    position: relative;
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.table-container {
+    height: 87vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .table {
+        margin-bottom: 0;
+        width: 100%;
+        table-layout: fixed; /* Enable fixed table layout for consistent column widths */
+
+        th {
+            .form-control-sm {
+                font-size: 0.875rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+
+        .column-header {
+            position: relative;
+        }
+
+        .column-title {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: help;
+            font-weight: 600;
+        }
+
+        .cell-content {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: help;
+        }
+
+        // Specific column width classes
+        .col-narrow {
+            width: 80px;
+            min-width: 80px;
+        }
+
+        .col-small {
+            width: 120px;
+            min-width: 120px;
+        }
+
+        .col-medium {
+            width: 150px;
+            min-width: 150px;
+        }
+
+        .col-large {
+            width: 200px;
+            min-width: 200px;
+        }
+
+        .col-extra-large {
+            width: 250px;
+            min-width: 250px;
+        }
+
+        .col-actions {
+            width: 100px;
+            min-width: 100px;
+        }
+    }
+}
+
+// Sticky header
+.table thead th {
+    position: sticky;
+    // top: 0;
+    // background: #fff;
+    // z-index: 1;
+    // border-bottom: 1px solid #dee2e6;
+}
+
+th, td {
+    padding: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+// Override tooltip styles for better readability
+::ng-deep .tooltip {
+  .tooltip-inner {
+    max-width: 300px;
+    word-wrap: break-word;
+    text-align: left;
+  }
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.search-box {
+    position: relative;
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.table-container {
+    height: 87vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.table-responsive {
+    flex-grow: 1;
+    margin-bottom: auto;
+    // height: 85%;
+    // overflow-x: auto;
+    // overflow-y: auto; 
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+
+    th {
+        .form-control-sm {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+}
+
+th, td {
+    padding: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.paging {
+   margin-top: auto;
+}
+
+
+// .paging {
+//     flex-shrink: 0;
+//     padding: 1rem 0;
+//     background: #fff;
+//     margin-top: 1rem;
+// }
+
+/* Add to common-datagrid.component.scss */
+.dropdown-left-force {
+  .dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+  }
+}
+
+/* Ensure dropdown doesn't go off-screen on mobile */
+@media (max-width: 576px) {
+  .dropdown-left-force .dropdown-menu {
+    right: auto !important;
+    left: 0 !important;
+  }
+}

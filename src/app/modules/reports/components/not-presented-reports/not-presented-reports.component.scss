@@ -1,0 +1,46 @@
+.row-spacing {
+    margin-bottom: 10px; /* Adjust the spacing value as needed */
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    width: 8em;
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  h5 {
+    font-weight: bold;
+  }
+
+  .ind-table {
+    margin-top: 1em;
+  }
+
+.ng-select.custom ::ng-deep .ng-select-container {
+    border: none !important;
+}
+
+.ng-select.custom {
+    padding: 0%;
+}
+
+.spinner-border {
+  width: 18px !important;
+  height: 18px !important;
+  left: calc(95% - 1rem);
+  top: 27%;
+}
+
+a {
+  text-decoration: underline !important;
+}

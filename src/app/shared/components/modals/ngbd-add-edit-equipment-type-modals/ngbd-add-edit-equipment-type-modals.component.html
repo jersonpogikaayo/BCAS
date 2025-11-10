@@ -1,0 +1,26 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form [formGroup]="equipmentTypesForm">
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="nameInput" class="form-label">Name <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="nameInput" placeholder="Enter Title" formControlName="name" [ngClass]="{ 'is-invalid': submitted && equipForm['name'].errors }">
+                    <div *ngIf="submitted && equipForm['name'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="equipForm['name'].errors['required']">Name is required</div>
+                      </div>
+                </div>
+            </div>
+           
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+     <div class="text-end">
+        <button type="submit" class="btn btn-primary" (click)="save()">Save</button>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row h-100">
+            <div class="col-lg-2 h-100">
+                <div class="" role="tablist" aria-orientation="vertical">
+                    <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                        <li [ngbNavItem]="0">
+                            <a ngbNavLink (click)="changeTab(0)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Equipment Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-equipment-details [equipment]="equipment"></app-equipment-details>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink (click)="changeTab(1)">
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Site Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-site-details [equipment]="equipment"></app-site-details>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink (click)="changeTab(2)">
+                                <i class="ri-mail-line d-block fs-20 mb-1"></i> Job Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-job-details [equipment]="equipment"></app-job-details>
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="3">
+                            <a ngbNavLink (click)="changeTab(3)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Condition Scale History </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-conditional-scale-history [equipment]="equipment"></app-conditional-scale-history>
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="4">
+                            <a ngbNavLink (click)="changeTab(4)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Linked Jobs </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                   <app-clinical-description-history [equipment]="equipment"></app-clinical-description-history>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10 h-100">
+                <div class="tab-content text-muted mt-3 mt-lg-0 h-100">
+                    <div [ngbNavOutlet]="CustomVertical" class="h-100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="retire()" *ngIf="!equipment.isRetired">Retire Now</button>
+        <button type="button" class="btn btn-primary" (click)="unRetire()" *ngIf="equipment.isRetired">UnRetire Now</button>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+.data-table {
+    padding: 0 0 0 1.75em;
+}
+
+th {
+    font-size: 1em;
+    color: grey;
+}
+
+.survey-section {
+    margin-bottom: 2em;
+
+    .accordion-button {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+      
+      &:not(.collapsed) {
+        background-color: #e7f3ff;
+        border-color: #b8daff;
+      }
+    }
+  
+    .question-column {
+      max-width: 300px;
+      word-wrap: break-word;
+    }
+  
+    .answer-text {
+      font-size: 0.9em;
+      max-width: 200px;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  
+    .image-answer {
+      text-align: center;
+      
+      img {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        transition: transform 0.2s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .table {
+      td {
+        vertical-align: middle;
+      }
+      
+      .badge {
+        font-size: 0.75rem;
+        min-width: 24px;
+        text-align: center;
+      }
+    }
+  }
+
+.alert-info {
+  background-color: rgba(13, 202, 240, 0.1);
+  border-color: rgba(13, 202, 240, 0.2);
+  
+  h5 {
+    color: #0dcaf0;
+  }
+}

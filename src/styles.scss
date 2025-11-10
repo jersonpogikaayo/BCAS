@@ -1,0 +1,142 @@
+/* You can add global styles to this file, and also import other style files */
+@import "src/assets/scss/config/default/bootstrap.scss";
+@import "src/assets/scss/config/default/app.scss";
+@import "src/assets/scss/icons.scss";
+
+@import url("../node_modules/primeicons/primeicons.css");
+@import url("../node_modules/primeng/resources/themes/lara-light-blue/theme.css");
+@import url("../node_modules/primeng/resources/primeng.min.css");
+
+.spinner-border {
+    position: absolute;
+    left: calc(50% - 2.5rem);
+    top: 50%;
+    z-index: 100;
+    width: 5rem !important;
+    height: 5rem !important;
+    border-width: 4px !important;
+}
+.center {
+    justify-content: center;
+}
+
+.padding-top {
+    padding-top: 10px;
+}
+
+/* modal animation */
+/*
+.modal-content {
+    animation-name: zoom-in;
+    animation-duration: .3s;
+}
+
+@keyframes zoom-in {
+    0% {transform: scale(0)}
+    100% {transform: scale(1)}
+}
+*/
+
+/* Google Maps autocomplete div should has higher z-index than any modal */
+.pac-container { z-index: 10000 !important; }
+
+/* Remove transitions to remove flickering in Safari */
+#topnav-hamburger-icon, #page-topbar, .navbar-menu {
+    transition: none;
+}
+
+.content-form {
+    height: 80vh;
+    overflow: auto;
+    padding-top: 0.5em;
+}
+
+
+.spinner-border {
+    width: 18px !important;
+    height: 18px !important;
+    left: calc(80% - 1rem);
+    top: 27%;
+}
+
+.form-label {
+    line-height: 3em;
+}
+
+.ng-select.custom ::ng-deep .ng-select-container {            
+	border: none !important;
+}
+
+.form-control {
+    background-color: white !important;
+}
+
+.ng-select.custom {
+    padding: 0%;
+}
+
+.listjs-pagination {
+    width: 100%;
+}
+
+.pagination {
+    display: inline-flex;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+:host ::ng-deep .md-drppicker .drops-down-right .ltr .shown .double .show-ranges {
+    left: 0px !important;
+}
+
+.main-content {
+    height: 100vh;
+    padding-bottom: 5em;
+    padding-top: 0.5em;
+    overflow: auto;
+}
+
+.page-content {
+    padding: 6em 0.5em 0em;
+    height: 100%;
+}
+
+.container-fluid {
+    height: 100%;
+}
+
+.header-section {
+    font-size: 16px;
+}
+
+.footer {
+    position: fixed !important;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+::ng-deep canvas{
+    border: 1px solid grey;
+}
+
+.no-click {
+    pointer-events: none;
+}
+
+// .modal {
+//     height: 120% !important;
+// }

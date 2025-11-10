@@ -1,0 +1,305 @@
+<div class="modal-header">
+  <h4 class="modal-title">CSV Customer Import</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="close()">
+  </button>
+</div>
+
+<div class="modal-body">
+  <!-- Step 1: File Upload -->
+  <div *ngIf="currentStep === 'upload'" class="upload-section">
+    <h5>Upload CSV File</h5>
+    <div class="drop-zone" 
+         [class.drag-over]="isDragOver"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onDrop($event)"
+         (click)="fileInput.click()">
+      <div *ngIf="!selectedFile" class="drop-zone-content">
+        <i class="ri-upload-cloud-line fs-1 text-muted"></i>
+        <p class="mb-2">Drag & drop your CSV file here</p>
+        <p class="text-muted">or click to browse</p>
+      </div>
+      <div *ngIf="selectedFile" class="selected-file">
+        <i class="ri-file-text-line me-2"></i>
+        {{ selectedFile.name }}
+        <small class="text-muted d-block">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</small>
+      </div>
+    </div>
+    <input #fileInput 
+           type="file" 
+           accept=".csv" 
+           style="display: none"
+           (change)="onFileSelected($event)">
+    <div *ngIf="isUploading" class="mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <small class="text-muted">Uploading...</small>
+        <small class="fw-bold">{{ uploadProgress.toFixed(0) }}%</small>
+      </div>
+      <div class="progress" style="height: 8px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+            role="progressbar" 
+            [style.width.%]="uploadProgress"
+            [class.bg-success]="uploadProgress === 100"
+            [attr.aria-valuenow]="uploadProgress"
+            aria-valuemin="0" 
+            aria-valuemax="100">
+        </div>
+      </div>
+      <div *ngIf="uploadProgress === 100" class="text-center mt-2">
+        <small class="text-success">
+          <i class="ri-check-line me-1"></i>Upload complete! Processing...
+        </small>
+      </div>
+    </div>
+    <div class="mt-3 text-center">
+      <button class="btn btn-primary" 
+              [disabled]="!selectedFile || isUploading"
+              (click)="uploadFile()">
+        <i class="ri-upload-line me-2"></i>
+        {{ isUploading ? 'Uploading...' : 'Upload CSV' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Field Mapping -->
+  <div *ngIf="currentStep === 'mapping'" class="mapping-section">
+    <div class="property-mapping-form">
+      <h2>Property Mapping Configuration</h2>
+      <p class="description">
+        Map each entity property to the corresponding CSV header from the available options.
+      </p>
+
+      <form [formGroup]="mappingForm" (ngSubmit)="onSubmit()">
+        <div class="mapping-container">
+          <div class="header-row">
+            <div class="entity-column">Entity</div>
+            <div class="property-column">Property</div>
+            <div class="csv-header-column">CSV Header</div>
+            <div class="actions-column">Actions</div>
+          </div>
+
+          <div formArrayName="mappings" class="mappings-list">
+            <div 
+              *ngFor="let mapping of mappingsFormArray.controls; let i = index" 
+              [formGroupName]="i" 
+              class="mapping-row"
+              [class.even]="i % 2 === 0"
+            >
+              <div class="entity-info">
+                <div class="entity-name">{{ getMappingValue(i, 'entity') }}</div>
+                <div class="full-path">{{ getMappingValue(i, 'fullPath') }}</div>
+              </div>
+              <div class="property-info">
+                <span class="property-name">{{ getMappingValue(i, 'property') }}</span>
+              </div>
+              <div class="csv-header-dropdown">
+                <select 
+                  formControlName="selectedCsvHeader" 
+                  class="form-select"
+                  [class.selected]="getMappingValue(i, 'selectedCsvHeader')"
+                >
+                  <option value="">-- Select CSV Header --</option>
+                  <option 
+                    *ngFor="let header of csvHeaders" 
+                    [value]="header"
+                    [selected]="getMappingValue(i, 'selectedCsvHeader') === header"
+                  >
+                    {{ header }}
+                  </option>
+                </select>
+              </div>
+              <div class="actions">
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="clearMapping(i)"
+                  [disabled]="!getMappingValue(i, 'selectedCsvHeader')"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Preview</button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset All</button>
+          <button type="button" class="btn btn-info" (click)="autoMap()">Auto Map</button>
+          <!-- <button type="button" class="btn btn-success" (click)="exportMappings()">Export JSON</button> -->
+        </div>
+        <div class="mapping-summary" *ngIf="getMappingSummary().total > 0">
+          <h4>Mapping Summary</h4>
+          <div class="summary-stats">
+            <span class="stat">
+              <strong>Total Properties:</strong> {{ getMappingSummary().total }}
+            </span>
+            <span class="stat">
+              <strong>Mapped:</strong> {{ getMappingSummary().mapped }}
+            </span>
+            <span class="stat">
+              <strong>Unmapped:</strong> {{ getMappingSummary().unmapped }}
+            </span>
+            <span class="stat">
+              <strong>Progress:</strong> {{ getMappingSummary().percentage }}%
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="currentStep === 'preview'" class="preview-section">
+    <div class="preview-header">
+      <h5>Preview Import Data</h5>
+      <div class="view-toggle">
+        <button 
+          type="button" 
+          class="btn btn-sm"
+          [class.btn-primary]="previewMode === 'tree'"
+          [class.btn-outline-primary]="previewMode !== 'tree'"
+          (click)="previewMode = 'tree'"
+        >
+          <i class="ri-node-tree me-1"></i>Tree View
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="previewMode === 'tree'" class="tree-preview">
+      <p class="text-muted">Hierarchical view of mapped entities and properties with actual data values</p>
+      <div class="tree-container">
+        <div class="hierarchical-node customer-node">
+          <div class="node-header" (click)="toggleNode('customer')">
+            <i class="expand-icon" 
+               [class.ri-arrow-down-s-line]="isNodeExpanded('customer')" 
+               [class.ri-arrow-right-s-line]="!isNodeExpanded('customer')"></i>
+            <i class="ri-user-line me-2 text-primary"></i>
+            <strong>Customer</strong>
+            <span class="badge bg-primary ms-auto">Record {{ currentRecordIndex + 1 }} of {{ hierarchicalData?.length || 0 }}</span>
+          </div>
+          
+          <div *ngIf="isNodeExpanded('customer')" class="node-content">
+            <div class="properties-section">
+              <ng-container *ngFor="let mapping of getFormattedMappings()">
+                <div *ngIf="mapping.entity === 'Customer'" class="property-row">
+                  <p class="property-item">
+                    <span class="property-name">{{ mapping.property }}:</span>
+                    <span class="property-value">
+                      {{ getHierarchicalValue(mapping.entity, mapping.property, currentRecordIndex) }}
+                    </span>
+                  </p>
+                  
+                </div>
+              </ng-container>
+            </div>
+
+            <div *ngIf="getCurrentRecord()?.sites?.length" class="child-nodes">
+              <div *ngFor="let siteData of getCurrentRecord()!.sites; let siteIdx = index" class="hierarchical-node site-node">
+                <div class="node-header" (click)="toggleNode('site-' + siteIdx)">
+                  <i class="expand-icon" 
+                     [class.ri-arrow-down-s-line]="isNodeExpanded('site-' + siteIdx)" 
+                     [class.ri-arrow-right-s-line]="!isNodeExpanded('site-' + siteIdx)"></i>
+                  <i class="ri-building-line me-2 text-info"></i>
+                  <strong>Site {{ siteIdx + 1 }}: {{ siteData.site.name || 'Unnamed Site' }}</strong>
+                  <span class="badge bg-info ms-auto">{{ siteData.departments?.length || 0 }} departments</span>
+                </div>
+                
+                <div *ngIf="isNodeExpanded('site-' + siteIdx)" class="node-content">
+                  <div class="properties-section">
+                    <ng-container *ngFor="let mapping of getFormattedMappings()">
+                      <div *ngIf="mapping.entity === 'Customer.Site'" class="property-row">
+                        <p class="property-item">
+                          <span class="property-name">{{ mapping.property }}</span>
+                          <span class="property-value">
+                            {{ getHierarchicalValue(mapping.entity, mapping.property, currentRecordIndex, siteIdx) }}
+                          </span>
+                        </p>
+                      </div>
+                    </ng-container>
+                  </div>
+
+                  <div *ngIf="siteData.departments?.length" class="child-nodes">
+                    <div *ngFor="let department of siteData.departments; let deptIdx = index" class="hierarchical-node department-node">
+                      <div class="node-header" (click)="toggleNode('dept-' + siteIdx + '-' + deptIdx)">
+                        <i class="expand-icon" 
+                           [class.ri-arrow-down-s-line]="isNodeExpanded('dept-' + siteIdx + '-' + deptIdx)" 
+                           [class.ri-arrow-right-s-line]="!isNodeExpanded('dept-' + siteIdx + '-' + deptIdx)"></i>
+                        <i class="ri-team-line me-2 text-success"></i>
+                        <strong>Department {{ deptIdx + 1 }}: {{ department.name || 'Unnamed Department' }}</strong>
+                        <span class="badge bg-success ms-auto">{{ department.equipment?.length || 0 }} equipment</span>
+                      </div>
+                      
+                      <div *ngIf="isNodeExpanded('dept-' + siteIdx + '-' + deptIdx)" class="node-content">
+                        <div class="properties-section">
+                          <ng-container *ngFor="let mapping of getFormattedMappings()">
+                            <div *ngIf="mapping.entity === 'Customer.Site.Department'" class="property-row">
+                              <p class="property-item">
+                                <span class="property-name">{{ mapping.property }}</span>
+                                <span class="property-value">
+                                  {{ getHierarchicalValue(mapping.entity, mapping.property, currentRecordIndex, siteIdx, deptIdx) }}
+                                </span>
+                              </p>
+                            </div>
+                          </ng-container>
+                        </div>
+
+                        <div *ngIf="department.equipment?.length" class="child-nodes">
+                          <div class="equipment-summary mb-3">
+                            <div class="node-header" (click)="toggleNode('equipment-' + siteIdx + '-' + deptIdx)">
+                              <i class="expand-icon" 
+                                 [class.ri-arrow-down-s-line]="isNodeExpanded('equipment-' + siteIdx + '-' + deptIdx)" 
+                                 [class.ri-arrow-right-s-line]="!isNodeExpanded('equipment-' + siteIdx + '-' + deptIdx)"></i>
+                              <i class="ri-tools-line me-2 text-warning"></i>
+                              <h6 class="d-inline text-muted mb-0">Equipment ({{ department.equipment.length }} items)</h6>
+                            </div>
+                            
+                            <div *ngIf="isNodeExpanded('equipment-' + siteIdx + '-' + deptIdx)" class="node-content mt-3">
+                              <div *ngFor="let equipment of department.equipment; let eqIdx = index" class="hierarchical-node equipment-node">
+                                <div class="node-header" (click)="toggleNode('eq-' + siteIdx + '-' + deptIdx + '-' + eqIdx)">
+                                  <i class="expand-icon" 
+                                     [class.ri-arrow-down-s-line]="isNodeExpanded('eq-' + siteIdx + '-' + deptIdx + '-' + eqIdx)" 
+                                     [class.ri-arrow-right-s-line]="!isNodeExpanded('eq-' + siteIdx + '-' + deptIdx + '-' + eqIdx)"></i>
+                                  <i class="ri-computer-line me-2 text-warning"></i>
+                                  <strong>Equipment {{ eqIdx + 1 }}: {{ getEquipmentValue(equipment, 'AssetNumber') || getEquipmentValue(equipment, 'SerialNumber') || 'Equipment #' + (eqIdx + 1) }}</strong>
+                                  <span class="badge bg-warning ms-auto">
+                                    [{{ department.equipment.length }} Properties Mapped]
+                                  </span>
+                                </div>
+                                
+                                <div *ngIf="isNodeExpanded('eq-' + siteIdx + '-' + deptIdx + '-' + eqIdx)" class="node-content">
+                                  <div class="properties-section">
+                                    <ng-container *ngFor="let mapping of getEquipmentMappings()">
+                                      <div class="property-row">
+                                        <p class="property-item">
+                                          <span class="property-name">{{ mapping.property }}</span>
+                                          <span class="property-value">
+                                            {{ getEquipmentValue(equipment, mapping.property) }}
+                                          </span>
+                                        </p>
+                                      </div>
+                                    </ng-container>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 d-flex justify-content-between">
+      <button class="btn btn-secondary" (click)="currentStep = 'mapping'">
+        <i class="ri-arrow-left-line me-2"></i>Back to Mapping
+      </button>
+      <button class="btn btn-primary" (click)="addCustomer()">
+        <i class="ri-check-line me-2"></i>Add Customer
+      </button>
+    </div>
+  </div>
+</div>

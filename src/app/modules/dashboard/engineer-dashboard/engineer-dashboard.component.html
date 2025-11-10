@@ -1,0 +1,159 @@
+<app-breadcrumbs title="DASHBOARD"></app-breadcrumbs>
+
+<div class="engineer-dashboard">
+  <div class="col-12">
+    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+      <h4 class="mb-0">Welcome back, {{ user.firstName }}!</h4>
+      <button class="btn btn-outline-primary btn-sm" (click)="refreshData()" [disabled]="isLoading">
+        <i class="ri-refresh-line me-1" [class.fa-spin]="isLoading"></i>
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+
+    <!-- First Row of Cards -->
+    <div class="row">
+      <div class="col-xxl-3">
+        <div class="card border card-border-primary">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Jobs Today</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsTodayCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs which are booked to be completed today.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']" 
+                 [queryParams]="getTodayJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-3">
+        <div class="card border card-border-danger">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Overdue Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsOverdueCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs that are overdue and require immediate action.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getOverdueJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-3">
+        <div class="card border card-border-primary">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Booked Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsBookedCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs that are booked to be completed.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getBookedJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-3">
+        <div class="card border card-border-warning">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Due Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsDueCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs that are due to be completed before the end of this month.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getDueJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row of Cards -->
+    <div class="row">
+      <div class="col-xxl-3">
+        <div class="card border card-border-primary">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Assigned Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsAssignedCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs that are assigned to me but not yet due to complete.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getAssignedJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-3">
+        <div class="card border card-border-primary">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Completed Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsCompletedCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs that have been successfully completed this month.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getCompletedJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-3">
+        <div class="card border card-border-danger">
+          <div class="card-header">
+            <h3 class="card-title mb-0">My Not Presented Jobs</h3>
+          </div>
+          <div class="card-body">
+            <h6 *ngIf="!isLoading">{{ jobsNotPresentedCount }}</h6>
+            <h6 *ngIf="isLoading"><span class="placeholder col-6"></span></h6>
+            <p class="card-text">Jobs which were not presented this month.</p>
+            <div class="text-end">
+              <a [routerLink]="['/dashboard/datagrid']"
+                 [queryParams]="getNotPresentedJobsQueryParams()"
+                 class="link-primary fw-medium">
+                Go To Jobs <i class="ri-arrow-right-line align-middle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

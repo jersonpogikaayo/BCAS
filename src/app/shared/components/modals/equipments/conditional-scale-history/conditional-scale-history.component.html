@@ -1,0 +1,37 @@
+ <table class="table table-responsive">
+    <thead class="table-light">
+        <tr>
+            <th scope="col" class="header-section">
+                Condition Scale History Detail
+            </th>
+        </tr>
+    </thead>
+</table>
+<table class="table align-middle table-nowrap mb-0" *ngIf="equipment.conditionScaleHistory.length != 0">
+    <thead class="table-light">
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Equipment Id</th>
+            <th scope="col">New Condition Scale</th>
+            <th scope="col">Old Condition Scale</th>
+            <th scope="col">Modified By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let detail of equipment.conditionScaleHistory">
+            <td>{{detail.dateCreated | date: 'yyyy-MM-dd'}}</td>
+            <td>{{detail.equipmentId}}</td>
+            <td *ngIf="detail.newConditionScale === 'Condemned'" class="red">{{detail.newConditionScale}}</td>
+            <td *ngIf="detail.newConditionScale === 'Poor'" class="orange">{{detail.newConditionScale}}</td>
+            <td *ngIf="detail.newConditionScale === 'Average'" class="yellow">{{detail.newConditionScale}}</td>
+            <td *ngIf="detail.newConditionScale === 'Good'" class="dark-green">{{detail.newConditionScale}}</td>
+            <td *ngIf="detail.newConditionScale === 'Excellent'" class="light-green">{{detail.newConditionScale}}</td>
+            <td *ngIf="detail.oldConditionScale">{{detail.oldConditionScale}}</td>
+            <td *ngIf="!detail.oldConditionScale"></td>
+            <td>{{detail.lastModifiedUser}}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="text-center" *ngIf="equipment.conditionScaleHistory.length == 0">
+    No condition scale history for this equipment yet.
+</div>

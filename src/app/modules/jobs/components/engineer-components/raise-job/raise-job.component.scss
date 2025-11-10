@@ -1,0 +1,30 @@
+.spinner-border {
+    width: 18px !important;
+    height: 18px !important;
+    left: calc(90% - 1rem);
+    top: 24%;
+}
+
+.add-equipment-col {
+    text-align: right;
+}
+.ng-select.custom ::ng-deep .ng-select-container {
+    border: none !important;
+}
+
+.ng-select.custom {
+    padding: 0%;
+}
+
+.title-summary {
+    margin-top: 1em;
+}
+
+// .modal-footer {
+//     display: block;
+//     width: 100%;
+// }
+
+.btn-next {
+    float: right;
+}

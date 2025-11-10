@@ -1,0 +1,11 @@
+{
+    "unassigned": ["Request Job", "View Detail"],
+    "assigned": ["Start Job", "Cannot Locate", "View Detail"],
+    "booked": ["Start Job", "Cannot Locate", "View Detail"],
+    "inProgress": ["Resume Job", "Pause (Incomplete)", "Cannot Locate", "View Detail"],
+    "incomplete": ["Resume Job", "Cannot Locate", "View Detail", "Download Excel", "Download PDF"],
+    "failed": ["View Detail", "Download Excel", "Download PDF"],
+    "pending": ["Sign Off Jobs", "View Detail", "Download Excel", "Download PDF"],
+    "completed": ["View Detail", "Download Excel", "Download PDF"],
+    "paused": ["Resume Job", "Cannot Locate", "View Detail", "Download Excel", "Download PDF"]
+}

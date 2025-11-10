@@ -1,0 +1,27 @@
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <!-- <button type="button" class="btn btn-primary waves-effect waves-light" (click)="createUpdateExcelTemplate('create')">
+                    <span class="flex-grow-1 me-2"> Add Template </span>
+                </button> -->
+            </div>
+            <div class="card-body">
+                <app-excel-templates-data-grid
+                    [gridItems]="gridItems"
+                    [loading]="loading"
+                    [totalItems]="totalItems"
+                    [currentPage]="currentPage"
+                    [pageSize]="pageSize"
+                    [columnHeader]="columnHeader"
+                    [isEngineer]="false"
+                    (searchData)="onSearch($event)"
+                    (pageChanged)="onPageChanged($event)"
+                    (pageSizeChanged)="onPageSizeChanged($event)"
+                    (actionSelected)="handleAction($event.action, $event.item)">
+                </app-excel-templates-data-grid>
+            </div>  
+        </div>
+    </div>
+</div>

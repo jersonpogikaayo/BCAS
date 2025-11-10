@@ -1,0 +1,243 @@
+<app-section-header [title]="'Test Equipments Used'"></app-section-header>
+
+<div class="row modal-body h-100">
+  <div class="col-xl-12">
+    
+    <!-- Loading State -->
+    <div class="text-center py-4" *ngIf="loading">
+      <p class="mt-2 text-muted">Loading test equipments...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="alert alert-danger d-flex align-items-center" *ngIf="error && !loading">
+      <i class="ri-error-warning-line me-2"></i>
+      <div class="flex-grow-1">{{ error }}</div>
+      <button class="btn btn-outline-danger btn-sm" (click)="retryLoad()">
+        <i class="ri-refresh-line me-1"></i>
+        Retry
+      </button>
+    </div>
+
+    <!-- Equipment Content -->
+    <div *ngIf="!loading && !error">
+
+      <!-- Equipment Table -->
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 50px;" *ngIf="!isCompleted">
+                <div class="form-check">
+                  <input class="form-check-input" 
+                         type="checkbox" 
+                         [checked]="areAllEquipmentsSelected()"
+                         [indeterminate]="areSomeEquipmentsSelected()"
+                         (change)="selectAllEquipments()"
+                         id="selectAllEquipments">
+                  <label class="form-check-label" for="selectAllEquipments"></label>
+                </div>
+              </th>
+              <th scope="col">ID</th>
+              <th scope="col">Type Name</th>
+              <th scope="col">Manufacturer Name</th>
+              <th scope="col">Model Name</th>
+              <th scope="col">Asset Number</th>
+              <th scope="col">Serial Number</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Show defaultEquipment when completed -->
+            <ng-container *ngIf="isCompleted">
+              <tr *ngFor="let equipment of defaultEquipment;" 
+                [style.opacity]="'0.6'">
+                
+                <!-- Equipment ID -->
+                <td>
+                  <span class="fw-bold text-primary">#{{ equipment.id }}</span>
+                </td>
+                
+                <!-- Type Name -->
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="ri-tools-line me-2 text-secondary"></i>
+                    <span class="fw-medium">{{ equipment.model.equipmentType.name }}</span>
+                  </div>
+                </td>
+                
+                <!-- Manufacturer Name -->
+                <td>
+                  <span class="text-dark">{{ equipment.manufacturer.name }}</span>
+                </td>
+                
+                <!-- Model Name -->
+                <td>
+                  <span class="text-muted">{{ equipment.model.name }}</span>
+                </td>
+                
+                <!-- Asset Number -->
+                <td>
+                  <span class="badge bg-light text-dark font-monospace border">
+                    {{ equipment.assetNumber }}
+                  </span>
+                </td>
+                
+                <!-- Serial Number -->
+                <td>
+                  <span class="font-monospace small bg-light px-2 py-1 rounded">
+                    {{ equipment.serialNumber }}
+                  </span>
+                </td>
+                
+                <!-- Status Column -->
+                <td>
+                  <div>
+                    <span class="badge bg-success">
+                      Used
+                    </span>
+                    <br>
+                    <small class="text-muted">
+                      Equipment was used in this job
+                    </small>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <!-- Show testEquipments when NOT completed -->
+            <ng-container *ngIf="!isCompleted">
+              <tr *ngFor="let equipment of testEquipments; trackBy: trackByEquipmentId" 
+                [class]="getEquipmentRowClass(equipment)"
+                [style.opacity]="isEquipmentDisabled(equipment) || equipment.isRetired ? '0.6' : '1'">
+                
+                <!-- Selection Checkbox -->
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" 
+                           type="checkbox" 
+                           [checked]="equipment.isSelected"
+                           [disabled]="equipment.isRetired || isEquipmentDisabled(equipment)"
+                           (change)="toggleEquipmentSelection(equipment)"
+                           [id]="'equipment_' + equipment.id">
+                    <label class="form-check-label" [for]="'equipment_' + equipment.id"></label>
+                  </div>
+                </td>
+                
+                <!-- Equipment ID -->
+                <td>
+                  <span class="fw-bold text-primary">#{{ equipment.id }}</span>
+                </td>
+                
+                <!-- Type Name -->
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="ri-tools-line me-2 text-secondary"></i>
+                    <span class="fw-medium">{{ equipment.typeName }}</span>
+                  </div>
+                </td>
+                
+                <!-- Manufacturer Name -->
+                <td>
+                  <span class="text-dark">{{ equipment.manufacturerName }}</span>
+                </td>
+                
+                <!-- Model Name -->
+                <td>
+                  <span class="text-muted">{{ equipment.modelName }}</span>
+                </td>
+                
+                <!-- Asset Number -->
+                <td>
+                  <span class="badge bg-light text-dark font-monospace border">
+                    {{ equipment.assetNumber }}
+                  </span>
+                </td>
+                
+                <!-- Serial Number -->
+                <td>
+                  <span class="font-monospace small bg-light px-2 py-1 rounded">
+                    {{ equipment.serialNumber }}
+                  </span>
+                </td>
+                
+                <!-- Status Column -->
+                <td>
+                  <div>
+                    <span [class]="getEquipmentStatusClass(equipment)">
+                      {{ getEquipmentStatus(equipment) }}
+                    </span>
+                    <br>
+                    <small class="text-muted" *ngIf="equipment.lastServiceExpiryDate">
+                      Expires: {{ formatServiceExpiryDate(equipment.lastServiceExpiryDate) }}
+                    </small>
+                    <small class="text-muted" *ngIf="!equipment.lastServiceExpiryDate">
+                      No service record
+                    </small>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Equipment Message - Only show when NOT completed -->
+      <div class="text-center py-5" *ngIf="!isCompleted && testEquipments.length === 0">
+        <div class="mb-3">
+          <i class="ri-tools-line display-4 text-muted"></i>
+        </div>
+        <h6 class="text-muted">No Test Equipment Found</h6>
+        <p class="text-muted small mb-3">No test equipment is assigned to your account.</p>
+        <button class="btn btn-outline-primary btn-sm" (click)="retryLoad()">
+          <i class="ri-refresh-line me-1"></i>
+          Refresh
+        </button>
+      </div>
+
+      <!-- No Default Equipment Message - Only show when completed -->
+      <div class="text-center py-5" *ngIf="isCompleted && (!defaultEquipment || defaultEquipment.length === 0)">
+        <div class="mb-3">
+          <i class="ri-tools-line display-4 text-muted"></i>
+        </div>
+        <h6 class="text-muted">No Equipment Used</h6>
+        <p class="text-muted small mb-3">No test equipment was used for this completed job.</p>
+      </div>
+
+      <!-- No Available Equipment Warning - Only show when NOT completed -->
+      <div class="alert alert-warning" *ngIf="!isCompleted && testEquipments.length > 0 && getAvailableEquipmentCount() === 0">
+        <div class="d-flex align-items-center">
+          <i class="ri-alert-line me-2"></i>
+          <div>
+            <strong>No Available Equipment</strong>
+            <p class="mb-0 small">All equipment requires service or is retired. Please contact your administrator.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Equipment Summary - Only show when NOT completed -->
+      <div class="mt-4" *ngIf="!isCompleted && getSelectedEquipmentCount() > 0">
+        <div class="alert alert-info border-0">
+          <div class="d-flex align-items-center mb-2">
+            <i class="ri-checkbox-circle-line me-2 text-info"></i>
+            <strong>{{ getSelectedEquipmentCount() }} Equipment Selected</strong>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-6" *ngFor="let equipment of selectedEquipments">
+              <div class="small">
+                <strong>{{ equipment.typeName }}</strong>
+                <br>
+                <span class="text-muted">
+                  {{ equipment.manufacturerName }} {{ equipment.modelName }}
+                </span>
+                <br>
+                <span class="font-monospace small">
+                  {{ equipment.assetNumber }} | {{ equipment.serialNumber }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

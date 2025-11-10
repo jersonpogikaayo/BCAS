@@ -1,0 +1,31 @@
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <button type="button" class="btn btn-primary waves-effect waves-light">
+                    <span class="flex-grow-1 me-2"> Add Sites </span>
+                </button>
+            </div>
+            <div class="card-body">
+                <app-site-data-grid
+                    [gridItems]="siteGridItems"
+                    [loading]="siteLoading"
+                    [totalItems]="siteTotalItems"
+                    [currentPage]="siteCurrentPage"
+                    [pageSize]="sitePageSize"
+                    [columnHeader]="siteColumnHeader"
+                    [showSelectionBox]="false"
+                    (searchData)="onSiteSearch($event)"
+                    (pageChanged)="onSitePageChanged($event)"
+                    (pageSizeChanged)="onPageSiteSizeChanged($event)"
+                    (selectionChanged)="onSelectionChangedSites($event)"
+                    (unselect)="removeSite($event)"
+                    (editSite)="onEditSite($event)">
+                </app-site-data-grid>
+            </div>  
+        </div>
+    </div>
+</div>

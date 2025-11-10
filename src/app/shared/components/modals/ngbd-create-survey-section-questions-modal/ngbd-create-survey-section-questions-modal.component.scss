@@ -1,0 +1,146 @@
+.optional-switch {
+    padding-top: 0.5em;
+}
+
+.border-dash {
+    height: 10em;
+    border: 2px dashed grey;
+}
+
+.border-dash-validation {
+  height: 100%;
+  border: 2px dashed grey;
+}
+
+.user-form-label {
+    height: 100%;
+    line-height: 7em;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.q-type-fields {
+    padding: 3em;
+}
+
+.question-options {
+    padding: 1em;
+}
+
+.example-list {
+    width: 500px;
+    max-width: 100%;
+    border: solid 1px #ccc;
+    min-height: 60px;
+    display: block;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    background: white;
+    font-size: 14px;
+  }
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 100;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.validation-form {
+  padding: 1em;
+}
+
+.form-check-right {
+  width: 100%;
+  text-align: right;
+  padding-right: 1em;
+}
+
+.toggle-label {
+  padding-right: 40px;
+}
+
+.example-accordion {
+  display: block;
+  max-width: 100%;
+}
+
+.example-accordion-item {
+  display: block;
+  border: solid 1px #ccc;
+}
+
+.example-accordion-item + .example-accordion-item {
+  border-top: none;
+}
+
+.example-accordion-item-header {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+
+.example-accordion-item-description {
+  font-size: 0.85em;
+  color: #999;
+}
+
+.example-accordion-item-header,
+.example-accordion-item-body {
+  padding: 16px;
+}
+
+.example-accordion-item-header:hover {
+  cursor: pointer;
+  background-color: #eee;
+}
+
+.example-accordion-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.example-accordion-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.bottom-btn {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.modal-body { 
+  max-height: 80vh;
+}

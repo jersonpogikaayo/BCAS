@@ -1,0 +1,73 @@
+// Minimal styles for clean signature pad
+#signatureContainer {
+  width: 100%;
+  
+  signature-pad {
+    width: 1000px !important;
+    height: 350px !important;
+    display: block;
+    border: 2px solid #dee2e6;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    
+    canvas {
+      width: 1000px !important;
+      height: 350px !important;
+      display: block !important;
+      cursor: crosshair;
+      touch-action: none;
+    }
+  }
+  
+  #btn-row {
+    .btn {
+      font-size: 0.875rem;
+      
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// Global canvas styling
+::ng-deep {
+  signature-pad canvas {
+    border: 2px solid #dee2e6 !important;
+    border-radius: 0.375rem !important;
+    background-color: #ffffff !important;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  #signatureContainer {
+    overflow-x: auto;
+    
+    #btn-row {
+      text-align: center;
+    }
+  }
+}
+
+
+.signature-container {
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  
+  &.disabled {
+    background-color: #f8f9fa;
+    
+    canvas {
+      cursor: not-allowed;
+    }
+  }
+}
+
+.signature-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}

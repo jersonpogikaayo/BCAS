@@ -1,0 +1,131 @@
+<div class="modal-header bg-light p-3">
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+  <div class="row h-100">
+      <div class="col-lg-2 h-100">
+          <div class="" role="tablist" aria-orientation="vertical">
+              <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                  <li [ngbNavItem]="0">
+                      <a ngbNavLink (click)="activeTab = 0" class="no-click">
+                          <i class="ri-user-2-line d-block fs-20 mb-1"></i> Site Details </a>
+                      <ng-template ngbNavContent>
+                        <form [formGroup]="siteForm">
+      
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="name" class="form-label">Site Name</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="name" placeholder="Enter Site Name" />
+                            </div>
+                          </div>
+                  
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="name" class="form-label">Email</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="email" placeholder="Enter Email" />
+                            </div>
+                          </div>
+                  
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="name" class="form-label">Phone</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="phone" placeholder="Enter Phone" />
+                            </div>
+                          </div>
+                  
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="postCode" class="form-label">Post Code</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="postCode" placeholder="Enter Post Code" />
+                            </div>
+                          </div>
+                        
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="address1" class="form-label">Address 1</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="address1" placeholder="Enter Address 1" />
+                            </div>
+                          </div>
+                          
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="address1" class="form-label">Address 2</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="address2" placeholder="Enter Address 2" />
+                            </div>
+                          </div>
+                  
+                          <div class="row mb-3">
+                            <div class="col-lg-3">
+                              <label for="address1" class="form-label">Address 3</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <input type="text" class="form-control" formControlName="address3" placeholder="Enter Address 3" />
+                            </div>
+                          </div>
+                        </form>
+                      </ng-template>
+                  </li>
+                  <li [ngbNavItem]="1">
+                    <a ngbNavLink (click)="activeTab = 1" class="no-click">
+                        <i class="ri-user-2-line d-block fs-20 mb-1"></i> Departments
+                    </a>
+                    <ng-template ngbNavContent>
+                      <div class="card">
+                          <div class="card-header">
+                            <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1.25em" (click)="addEditDepartment(null)">
+                              <span class="flex-grow-1 me-2"> Add New Department</span>
+                            </button>
+                          </div>
+                          <div class="card-body p-4">
+                              <div class="row mb-3">
+                                <app-departments-data-grid
+                                  [gridItems]="departmentGridItems"
+                                  [loading]="departmentLoading"
+                                  [totalItems]="departmentTotalItems"
+                                  [currentPage]="departmentCurrentPage"
+                                  [pageSize]="departmentPageSize"
+                                  [columnHeader]="departmentColumnHeader"
+                                  (searchData)="onSearchDepartment($event)"
+                                  (pageChanged)="onPageChangedDepartment($event)"
+                                  (pageSizeChanged)="onPageSizeChangedDepartment($event)"
+                                  (editDepartment)="addEditDepartment($event)">
+                                </app-departments-data-grid>
+                              </div>
+                          </div>
+                      </div>
+                    </ng-template>
+                </li>
+              </ul>
+          </div>
+      </div>
+      <div class="col-lg-10 h-100">
+          <div class="tab-content text-muted mt-3 mt-lg-0 h-100" [ngbNavOutlet]="CustomVertical">
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="text-end">
+      <button type="submit" class="btn btn-primary" (click)="saveSite()" *ngIf="activeTab === 0" [disabled]="siteForm.invalid || saveSiteLoading">
+        <span class="flex-grow-1 me-2">Save Site Details</span>
+        <span class="spinner-border flex-shrink-0" role="status" *ngIf="saveSiteLoading">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="close()" *ngIf="activeTab === 1" [disabled]="departmentGridItems.length === 0">
+        Save Department
+      </button>
+  </div>
+</div>

@@ -1,0 +1,217 @@
+<div class="row">
+    <div class="col-lg-12" *ngIf="!showCreateJob">
+        <div class="card">
+            <div class="card-body p-4">
+                <form (ngSubmit)="search()">
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Serial Number or Asset Number</label>
+                        </div>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" id="assetSerialNumber" [(ngModel)]="assetSerialNumber" name="assetSerialNumber">
+                        </div>
+                        <div class="col-lg-1">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <span class="d-flex align-items-center">
+                                    <span class="flex-grow-1 me-2">
+                                        Search
+                                    </span>
+                                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row mb-3" *ngIf="showEquipment">
+                    <div class="col-12">
+                        <!-- Loading State -->
+                        <div *ngIf="isLoading" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted mt-2">Searching for equipment...</p>
+                        </div>
+
+                        <!-- Equipment Results -->
+                        <div *ngIf="!isLoading">
+                            <!-- Equipment Found -->
+                            <div *ngIf="selectedEquipment.length > 0">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Found {{ selectedEquipment.length }} equipment(s)</h6>
+                                </div>
+                                <table class="table align-middle table-nowrap mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Serial Number</th>
+                                            <th scope="col">Asset Number</th>
+                                            <th scope="col">Department Name</th>
+                                            <th scope="col">Model</th>
+                                            <th scope="col">Manufacturer</th>
+                                            <th scope="col">Site</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let equip of selectedEquipment">
+                                        <td>{{ equip.id }}</td>
+                                        <td>{{ equip.serialNumber || '-' }}</td>
+                                        <td>{{ equip.assetNumber || '-' }}</td>
+                                        <td>{{ equip.department?.name || '-' }}</td>
+                                        <td>{{ equip.model?.equipmentType?.name || '-' }}</td>
+                                        <td>{{ equip.manufacturer?.name || '-' }}</td>
+                                        <td>{{ equip.site?.name || '-' }}</td>
+                                        <td>
+                                        <button class="btn btn-primary btn-sm" 
+                                                (click)="openCreateJobModal(equip)">
+                                            Create Job
+                                        </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- No Equipment Found -->
+                            <div *ngIf="selectedEquipment.length === 0 && !showEquipmentForm" class="text-center py-5">
+                                <i class="ri-search-line fs-1 text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted">No Equipment Found</h5>
+                                <p class="text-muted">
+                                    No results for "<strong>{{ assetSerialNumber }}</strong>"
+                                </p>
+                                <button class="btn btn-outline-primary btn-sm" (click)="clearSearch()">
+                                    <i class="ri-refresh-line me-1"></i>Try Another Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form [formGroup]="equipmentForm" *ngIf="showEquipmentForm">
+                    <h4 style="margin-bottom: 1em;">Details of the new piece of Equipment</h4>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Site</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <ng-select class="custom form-control" (change)="selectSite($event)" [items]="allSite" bindLabel="name" bindValue="id" formControlName="site" [ngClass]="{ 'is-invalid': submitted && f['site'].errors }"></ng-select>
+                            <div *ngIf="submitted && f['site'].errors" class="invalid-feedback">
+                                <div *ngIf="f['site'].errors['required']">Site is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Department</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <ng-select class="custom form-control" [items]="allDepartment" bindLabel="name" bindValue="id" formControlName="department" [ngClass]="{ 'is-invalid': submitted && f['department'].errors }"></ng-select>
+                            <div *ngIf="submitted && f['department'].errors" class="invalid-feedback">
+                                <div *ngIf="f['department'].errors['required']">Department is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Manufacturer</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <ng-select class="custom form-control" (change)="selectManufacturer($event)" [items]="allManufacturer" bindLabel="name" bindValue="id" formControlName="manufacturer" [ngClass]="{ 'is-invalid': submitted && f['manufacturer'].errors }"></ng-select>
+                            <div *ngIf="submitted && f['manufacturer'].errors" class="invalid-feedback">
+                                <div *ngIf="f['manufacturer'].errors['required']">Manufacturer is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Model</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <ng-select class="custom form-control" [items]="allModel" bindLabel="name" formControlName="model" [ngClass]="{ 'is-invalid': submitted && f['model'].errors }"></ng-select>
+                            <div *ngIf="submitted && f['model'].errors" class="invalid-feedback">
+                                <div *ngIf="f['model'].errors['required']">Model is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Asset Number</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="email" class="form-control" id="assetNumber" formControlName="assetNumber" [ngClass]="{ 'is-invalid': submitted && f['assetNumber'].errors }">
+                            <div *ngIf="submitted && f['assetNumber'].errors" class="invalid-feedback">
+                                <div *ngIf="f['assetNumber'].errors['required']">Asset Number is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label for="name-field" class="form-label">Serial Number</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="email" class="form-control" id="serialNumber" formControlName="serialNumber" [ngClass]="{ 'is-invalid': submitted && f['serialNumber'].errors }">
+                            <div *ngIf="submitted && f['serialNumber'].errors" class="invalid-feedback">
+                                <div *ngIf="f['serialNumber'].errors['required']">Serial Number is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label"></div>
+                        <div class="col-lg-10 add-equipment-col">
+                            <button class="btn btn-primary" type="submit" (click)="addEquipment()">
+                                <span class="d-flex align-items-center">
+                                    <span class="flex-grow-1 me-2">
+                                        Add Equipment
+                                    </span>
+                                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="submitted">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #createJobModalTemplate let-modal>
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss()"></button>
+    </div>
+  
+    <div class="modal-body">
+        <app-create-jobs #createJobsRef [equipment]="selectedEquipmentForJob" (closeModal)="modal.dismiss()" (createJobFinished)="createJobFinished($event)"></app-create-jobs>
+    </div>
+
+    <div class="modal-footer">
+        <div class="d-flex justify-content-between w-100">
+            <button type="button" class="btn btn-primary" (click)="modal.dismiss()">
+                Cancel
+            </button>
+           
+            <button type="button" class="btn btn-primary" (click)="createJobsRef.next()" [disabled]="!createJobsRef.isValid()" *ngIf="createJobsRef.activeTab === 0">
+                Next
+                <i class="ri-arrow-right-line ms-1"></i>
+            </button>
+            <button type="button" class="btn btn-primary" (click)="createJobsRef.next()" [disabled]="!createJobsRef.isJobDetailsFormValid()" *ngIf="createJobsRef.activeTab === 1">
+                Next
+                <i class="ri-arrow-right-line ms-1"></i>
+            </button>
+            <button type="button" class="btn btn-primary" (click)="createJobsRef.next()" [disabled]="createJobsRef.selectedEquipmentSurvey.length === 0" *ngIf="createJobsRef.activeTab === 2">
+                Next
+                <i class="ri-arrow-right-line ms-1"></i>
+            </button>
+             <button type="button" class="btn btn-primary" (click)="createJobsRef.createJob()" *ngIf="createJobsRef.activeTab === 3">
+                Create Job
+                <i class="ri-arrow-right-line ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+</ng-template>

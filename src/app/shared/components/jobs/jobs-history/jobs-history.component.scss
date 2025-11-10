@@ -1,0 +1,54 @@
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+
+// Optional: Custom tooltip styling
+.tooltip {
+  font-size: 12px;
+}
+
+.tooltip-inner {
+  max-width: 300px;
+  text-align: left;
+}
+
+.text-success {
+  color: #198754 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+// Optional: Custom overdue styling
+.overdue-positive {
+  color: #198754;
+  font-weight: 500;
+}
+
+.overdue-negative {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.signature-img {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.text-truncate {
+  cursor: help;
+}
+
+.badge {
+  font-size: 0.75rem;
+  white-space: nowrap;
+}

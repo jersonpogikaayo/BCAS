@@ -1,0 +1,56 @@
+<div class="signature-pad-wrapper">
+  <div class="signature-pad-container">
+    
+    <!-- Signature Canvas -->
+    <div class="signature-canvas-container" [class.disabled]="isDisabled">
+      <div #signatureContainer>
+        <div class="row">
+          <!-- Signature Pad -->
+          <ng-container *ngIf="isDisabled">
+            <img 
+              *ngIf="isDisabled && hasSignature" 
+              [src]="getImageSrc()" 
+              class="signature-image"
+              alt="Signature">
+          </ng-container>
+          
+          <ng-container *ngIf="!isDisabled">
+            <signature-pad 
+              [options]="signaturePadOptions" 
+              (onBeginEvent)="onBeginSign()" 
+              (onEndEvent)="onEndSign()">
+            </signature-pad>
+          </ng-container>
+        </div>
+        
+        <!-- Simple Controls -->
+        <div class="row mt-2" id="btn-row" *ngIf="!isDisabled">
+          <div class="col">
+            <button type="button" 
+                    class="btn btn-outline-primary btn-sm me-2" 
+                    (click)="clear()" 
+                    [disabled]="!hasSignature">
+              {{ isSketch ? 'Clear Sketch' : 'Clear Signature' }}
+            </button>
+            
+            <button type="button" 
+                    class="btn btn-outline-secondary btn-sm" 
+                    (click)="undo()" 
+                    [disabled]="!hasSignature">
+              Undo
+            </button>
+          </div>
+        </div>
+        
+        <!-- Simple Status -->
+        <div class="row mt-1" *ngIf="hasSignature">
+          <div class="col">
+            <small class="text-success">
+              <i class="ri-checkbox-circle-line me-1"></i>Signature captured
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

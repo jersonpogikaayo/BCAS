@@ -1,0 +1,96 @@
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    
+    <div class="modal-body">
+        <div class="row h-100">
+            <div class="col-12">
+                <div class="alert alert-info mb-3">
+                    <i class="ri-information-line me-2"></i> Please provide your name and signature to sign off this job.
+                </div>
+                
+                <!-- Job Details (Optional) -->
+                <div class="card mb-3" *ngIf="jobData">
+                    <div class="card-body">
+                        <h6 class="card-title">Job Details</h6>
+                        <div class="row" *ngIf="!isBatch">
+                            <div class="col-md-6">
+                                <strong>Job ID:</strong> {{ jobData.jobId || jobData.id }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Site:</strong> {{ jobData.siteName || jobData.site }}
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="isBatch">
+                            <div class="col-md-6">
+                                <strong>Job ID's:</strong> 
+                                <ng-container *ngFor="let data of jobData">
+                                    {{ data.id }},
+                                </ng-container>
+                            </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form [formGroup]="signatureForm" (ngSubmit)="onSubmit()">
+                    <!-- Name Field -->
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label class="form-label" for="name"> Name <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-10 form-values">
+                            <input type="text" id="name-field" class="form-control" formControlName="name" placeholder="Enter your full name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                            <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                                <div *ngIf="f['name'].errors['required']">Name is required</div>
+                                <div *ngIf="f['name'].errors['minlength']">Name must be at least 2 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Signature Field -->
+                    <div class="row mb-3">
+                        <div class="col-lg-2 user-form-label">
+                            <label class="form-label"> Signature <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-10 form-values">
+                            <div class="signature-container">
+                                <div class="signature-placeholder p-3" [ngClass]="{ 'border-danger': submitted && !signatureImage }">
+                                    <app-signature-pad #signaturePad [isDisabled]="isSubmitting" (imageUrl)="onSignatureCaptured($event)"></app-signature-pad>
+                                </div>
+                                <!-- Signature Actions -->
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small class="text-muted">
+                                        <i class="ri-information-line me-1"></i> Draw your signature in the box above
+                                    </small>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearSignature()" [disabled]="isSubmitting">
+                                        <i class="ri-eraser-line me-1"></i> Clear
+                                    </button>
+                                </div>
+                                <!-- Signature Error -->
+                                <div *ngIf="submitted && !signatureImage" class="text-danger mt-1">
+                                    <small>Signature is required</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Updated Modal Footer - Removed nested row/col structure -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="close()" [disabled]="isSubmitting">
+            <i class="ri-close-line me-1"></i>
+            Cancel
+        </button>
+        
+        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="isSubmitting || !isFormValid()">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isSubmitting" class="ri-check-line me-1"></i>
+            {{ isSubmitting ? 'Signing Off...' : 'Sign Off Job' }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,122 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-3" style="align-self: end;">
+                        <label for="exampleInputdate" class="form-label">Customer</label>
+                        <ng-select class="custom form-control" [items]="customer" bindLabel="name" bindValue="id" [(ngModel)]="selectedCustomerId" *ngIf="customer"></ng-select>
+                        <div *ngIf="submitted && !selectedCustomerId" class="invalid-feedback" align="left">
+                            <ng-container>Please select a customer to continue.</ng-container>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mt-3">
+                            <label class="form-label mb-0">Date Range</label>
+                            <input type="text" ngxDaterangepickerMd [(ngModel)]="dateRange" [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="false" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-lg-3" style="align-self: end;">
+                        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="search()" [disabled]="!selectedCustomerId">
+                            <span class="flex-grow-1 me-2"> Submit </span>
+                            <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                                <span class="visually-hidden">Loading...</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" *ngIf="submitted && !isLoading && opReportData">
+                <div class="row ind-table">
+                    <h5>Jobs</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th> Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Not Presented Jobs</td>
+                                <td>
+                                     {{ opReportData.notPresentedJobsCount }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Not Presented and Active</td>
+                                <td>
+                                     {{ opReportData.notPresentedAndActiveJobsCount }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PM Unscheduled Jobs</td>
+                                <td>
+                                     {{ opReportData.pmUnscheduledJobsCount }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row ind-table">
+                    <h5>Percentage</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th> Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Not Presented and Active</td>
+                                <td> {{opReportData.notPresentedVsNotPresenetedAndActivePercentage}} %</td>
+                            </tr>
+                            <tr>
+                                <td>PM UnScheduled and Not Presented</td>
+                                <td> {{opReportData.notPresentedIntersectedWithPMUnscheduledJobsPercentage}} %</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row ind-table">
+                    <h5>Intersected Jobs</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th> Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Not Presented and PM Unscheduled Jobs</td>
+                                <td>
+                                    {{ opReportData.notPresentedIntersectedWithPMUnscheduledJobsCount }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer" *ngIf="submitted">
+                <!-- <div class="row">
+                    <div class="col-lg-12" style="align-self: end;">
+                        <button type="button" class="btn btn-primary waves-effect waves-light">
+                            <span class="flex-grow-1 me-2"> Download Excel </span>
+                            <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoadingExcel">
+                                <span class="visually-hidden">Loading...</span>
+                            </span>
+                        </button>
+                        <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1em;">
+                            <span class="flex-grow-1 me-2"> Download PDF </span>
+                            <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoadingPDF">
+                                <span class="visually-hidden">Loading...</span>
+                            </span>
+                        </button>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

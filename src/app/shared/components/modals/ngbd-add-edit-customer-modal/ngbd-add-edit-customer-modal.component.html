@@ -1,0 +1,119 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+    <div class="row h-100">
+        <div class="col-lg-2 h-100">
+            <div class="" role="tablist" aria-orientation="vertical">
+                <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                    <li [ngbNavItem]="0">
+                        <a ngbNavLink (click)="activeTab = 0" class="no-click">
+                            <i class="ri-user-2-line d-block fs-20 mb-1"></i> Customer Details </a>
+                        <ng-template ngbNavContent>
+                            <form [formGroup]="customerForm">
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="websiteUrl" class="form-label">Customer Name</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <input type="url" class="form-control" id="websiteUrl" placeholder="Enter your Customer Name" formControlName="name" />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="nameInput" class="form-label">Customer Type</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <ng-select class="custom form-control" [items]="customerType" bindLabel="name" bindValue="id" formControlName="customerTypeId"></ng-select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="leaveemails" class="form-label">Customer Parent</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <ng-select class="custom form-control" [items]="customerParent" bindLabel="name" bindValue="id" formControlName="parentId"></ng-select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="contactNumber" class="form-label">Cover Level</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <ng-select class="custom form-control" [items]="coverLevel" bindLabel="name" bindValue="id" formControlName="coverLevelId"></ng-select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-lg-3">
+                                        <label for="timeInput" class="form-label">Notes</label>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <textarea class="form-control" id="exampleFormControlTextarea5" rows="3" formControlName="notes"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </ng-template>
+                    </li>
+                    <li [ngbNavItem]="1">
+                        <a ngbNavLink (click)="activeTab = 1" class="no-click">
+                            <i class="ri-user-2-line d-block fs-20 mb-1"></i> Sites </a>
+                        <ng-template ngbNavContent>
+                            <div class="card">
+                                <div class="card-header">
+                                    <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1.25em" (click)="addNewSite()">
+                                        <span class="flex-grow-1 me-2"> Add New Site </span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1.25em">
+                                        <span class="flex-grow-1 me-2"> Add Existing Site </span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary waves-effect waves-light" style="margin-left: 1.25em">
+                                        <span class="flex-grow-1 me-2"> Upload CSV </span>
+                                    </button>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row mb-3">
+                                        <app-site-data-grid
+                                          [gridItems]="siteGridItems"
+                                          [loading]="siteLoading"
+                                          [totalItems]="siteTotalItems"
+                                          [currentPage]="siteCurrentPage"
+                                          [pageSize]="sitePageSize"
+                                          [columnHeader]="siteColumnHeader"
+                                          [showSelectionBox]="false"
+                                          (searchData)="onSiteSearch($event)"
+                                          (pageChanged)="onSitePageChanged($event)"
+                                          (pageSizeChanged)="onPageSiteSizeChanged($event)"
+                                          (selectionChanged)="onSelectionChangedSites($event)"
+                                          (unselect)="removeSite($event)"
+                                          (editSite)="onEditSite($event)">
+                                        </app-site-data-grid>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-10 h-100">
+            <div class="tab-content text-muted mt-3 mt-lg-0 h-100" [ngbNavOutlet]="CustomVertical">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary" *ngIf="activeTab === 0" (click)="saveCustomer()" [disabled]="customerForm.invalid">
+          <span class="flex-grow-1 me-2">Save Customer Details</span>
+            <span class="spinner-border flex-shrink-0" role="status" *ngIf="addCustomerLoading">
+            <span class="visually-hidden">Loading...</span>
+          </span>
+        </button>
+        <button type="submit" class="btn btn-primary" *ngIf="activeTab === 1" (click)="close()" [disabled]="siteTotalItems === 0 || saveSitesLoading">
+          <span class="flex-grow-1 me-2">Save Sites</span>
+            <span class="spinner-border flex-shrink-0" role="status" *ngIf="saveSitesLoading">
+            <span class="visually-hidden">Loading...</span>
+          </span>
+        </button>
+    </div>
+</div>

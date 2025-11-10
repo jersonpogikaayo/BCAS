@@ -1,0 +1,184 @@
+<app-section-header [title]="'Job Details'"></app-section-header>
+
+<!-- Job Equipment Details Table -->
+<div class="table-responsive mb-4">
+    <table class="table align-middle table-nowrap mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" style="width: 200px;">Title</th>
+                <th scope="col">Equipment Asset Number</th>
+                <th scope="col">Equipment Serial Number</th>
+                <th scope="col">GMDN Number</th>
+                <th scope="col">ECRI Number</th>
+                <th scope="col" class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td 
+                    [class.text-danger]="!job?.title"
+                    class="text-truncate"
+                    style="max-width: 200px;"
+                    [title]="job?.title || 'No Data'"
+                    [attr.data-bs-toggle]="job?.title ? 'tooltip' : null"
+                    [attr.data-bs-placement]="'top'">
+                    {{ job?.title || 'No Data' }}
+                </td>
+                <td [class.text-danger]="!job?.equipment?.assetNumber">{{ job?.equipment?.assetNumber || 'No Data' }}</td>
+                <td [class.text-danger]="!job?.equipment?.serialNumber">{{ job?.equipment?.serialNumber || 'No Data' }}</td>
+                <td [class.text-danger]="!job?.equipment?.gmdn">{{ job?.equipment?.gmdn || 'No Data' }}</td>
+                <td [class.text-danger]="!job?.equipment?.ecri">{{ job?.equipment?.ecri || 'No Data' }}</td>
+                <td class="text-end">
+                    <button 
+                        type="button" 
+                        class="btn btn-primary btn-sm"
+                        [disabled]="!job?.equipment">
+                        <i class="ri-eye-line me-1"></i>
+                        Equipment Details
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Job Status & Timeline Table -->
+<div class="table-responsive" *ngIf="job">
+    <table class="table align-middle table-nowrap mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Assigned To</th>
+                <th scope="col">Current Status</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Booked Date</th>
+                <th scope="col">Completion Date</th>
+                <th scope="col">Overdue</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td [class.text-danger]="!job?.user?.userName">{{ job?.user?.userName || 'No Data' }}</td>
+                <td [class.text-danger]="!job?.status?.niceName">{{ job?.status?.niceName || 'No Data' }}</td>
+                <td [class.text-danger]="!job?.dueDate">{{ job?.dueDate ? (job.dueDate | date: 'dd/MM/yyyy') : 'No Date' }}</td>
+                <td [class.text-danger]="!job?.bookedDate">{{ job?.bookedDate ? (job.bookedDate | date: 'dd/MM/yyyy') : 'No Date' }}</td>
+                <td [class.text-danger]="!job?.completionDate">{{ job?.completionDate ? (job.completionDate | date: 'dd/MM/yyyy') : 'No Date' }}</td>
+                <td>
+                    <span 
+                        [class.text-success]="getOverdue(job) < 0"
+                        [class.text-danger]="getOverdue(job) >= 0">
+                        {{ getOverdue(job) < 0 ? getAbsoluteOverdue(job) : getOverdue(job) }} days
+                        <i class="ri-time-line ms-1" 
+                           [class.text-success]="getOverdue(job) < 0"
+                           [class.text-danger]="getOverdue(job) >= 0"></i>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- No Job Data State -->
+<div class="text-center py-5" *ngIf="!job">
+    <i class="ri-file-text-line display-4 text-muted mb-3"></i>
+    <h6 class="text-muted">No Job Data Available</h6>
+    <p class="text-muted small">Job information could not be loaded.</p>
+</div>
+
+
+<br>
+<br>
+<app-section-header [title]="'Job History'"></app-section-header>
+
+<div class="table-responsive" *ngIf="jobHistory && jobHistory.length > 0; else noHistoryTemplate">
+    <table class="table align-middle table-nowrap mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" style="width: 120px;">Date</th>
+                <th scope="col">Details</th>
+                <th scope="col" style="width: 130px;">Status Change</th>
+                <th scope="col" style="width: 150px;">Signature</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let history of jobHistory; trackBy: trackByHistoryId">
+                <!-- Date Column -->
+                <td class="fw-medium">
+                    {{ history.date | date: 'dd/MM/yyyy' }}
+                    <br>
+                    <small class="text-muted">{{ history.date | date: 'HH:mm' }}</small>
+                </td>
+                
+                <!-- Details Column -->
+                <td>
+                    <div class="text-truncate" style="max-width: 300px;" [title]="history.detail">
+                        {{ history.detail }}
+                    </div>
+                </td>
+                
+                <!-- Status Change Column -->
+                <td>
+                    <span [class]="getStatusBadgeClass()">
+                        {{ history.previousStatus }} → {{ history.newStatus }}
+                    </span>
+                </td>
+                
+                <!-- Signature Column -->
+                <td>
+                    <div *ngIf="history.jobStatusHistorySignature?.signature; else noSignature">
+                        <img 
+                            [src]="'data:image/png;base64,' + history.jobStatusHistorySignature?.signature?.file"
+                            class="signature-img"
+                            [alt]="'Signature by ' + (history.jobStatusHistorySignature?.name || 'Unknown')"
+                            [title]="'Signed by: ' + (history.jobStatusHistorySignature?.name || 'Unknown')"
+                            style="height: 60px; width: 120px; border: 1px solid #dee2e6; border-radius: 4px; object-fit: contain;">
+                        <br>
+                        <small class="text-muted">{{ history.jobStatusHistorySignature?.name || 'Unknown' }}</small>
+                    </div>
+                    <ng-template #noSignature>
+                        <span class="text-muted small">
+                            <i class="ri-file-line me-1"></i>
+                            No Signature
+                        </span>
+                    </ng-template>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- No History Template -->
+<ng-template #noHistoryTemplate>
+    <div class="text-center py-5">
+        <i class="ri-history-line display-4 text-muted mb-3"></i>
+        <h6 class="text-muted">No History Available</h6>
+        <p class="text-muted small">No status changes have been recorded for this job.</p>
+    </div>
+</ng-template>
+
+<div class="d-flex align-items-start gap-3 mt-4 modal-footer">
+    <div class="d-flex justify-content-end gap-2 mb-3" *ngIf="jobHistory && jobHistory.length > 0">
+    <button 
+        type="button" 
+        class="btn btn-primary btn-label"
+        [disabled]="isLoadingPDF"
+        (click)="downloadPDF()">
+        <i class="ri-file-pdf-line label-icon align-middle fs-16 me-2" *ngIf="!isLoadingPDF"></i>
+        <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isLoadingPDF">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+        <span>Download PDF</span>
+    </button>
+    
+    <button 
+        type="button" 
+        class="btn btn-success btn-label"
+        [disabled]="isLoadingExcel"
+        (click)="downloadExcel()">
+        <i class="ri-file-excel-line label-icon align-middle fs-16 me-2" *ngIf="!isLoadingExcel"></i>
+        <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isLoadingExcel">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+        <span>Download Excel</span>
+    </button>
+</div>
+</div>

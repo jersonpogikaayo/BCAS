@@ -1,0 +1,168 @@
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row h-100">
+            <div class="col-lg-2 h-100">
+                <div class="" role="tablist" aria-orientation="vertical">
+                    <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                        <li [ngbNavItem]="0">
+                            <a ngbNavLink (click)="changeTab(0)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Survey </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-survey-process 
+                                        [survey]="survey" 
+                                        [job]="job" 
+                                        [currentAnswers]="currentAnswers" 
+                                        [jobStatus]="'is_completed'" 
+                                        (stepChanged)="onSurveyStepChanged($event)"
+                                        (surveyCompleted)="onSurveyCompleted($event)"
+                                        #surveyProcess>
+                                    </app-survey-process>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink (click)="changeTab(1)">
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Test Equipment (optional) </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-test-equipments
+                                        [isCompleted]="isCompleted"
+                                        [defaultEquipment]="job.testEquipment"
+                                        >
+                                    </app-test-equipments>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink (click)="changeTab(2)">
+                                <i class="ri-mail-line d-block fs-20 mb-1"></i> Customer Feedback </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-survey-process 
+                                        [survey]="customerFeedackSurvey" 
+                                        [job]="job" 
+                                        [currentAnswers]="currentAnswers" 
+                                        [jobStatus]="'is_completed'" 
+                                        (stepChanged)="onSurveyStepChanged($event)"
+                                        (surveyCompleted)="onSurveyCompleted($event)"
+                                        #surveyProcess>
+                                    </app-survey-process>
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="3">
+                            <a ngbNavLink (click)="changeTab(3)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> History </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-history
+                                        [job]="job" 
+                                    ></app-jobs-history>
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="4">
+                            <a ngbNavLink (click)="changeTab(4)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Linked Jobs </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <ng-container *ngIf="gridItems.length != 0">
+                                        <app-common-datagrid
+                                            [gridItems]="gridItems"
+                                            [totalItems]="gridItems.length"
+                                            [loading]="loading"
+                                            [currentPage]="currentPage"
+                                            [pageSize]="pageSize"
+                                            [columnHeader]="cols"
+                                            [withFilter]="false"
+                                        >
+                                        </app-common-datagrid>
+                                    </ng-container>
+                                   
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="5">
+                            <a ngbNavLink (click)="changeTab(5)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Job Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-details
+                                        [job]="job" 
+                                        #jobsDetails
+                                    ></app-jobs-details>
+                                </div>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="6">
+                            <a ngbNavLink (click)="changeTab(6)">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Attachments </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-attachments
+                                        [job]="job" 
+                                        #jobsAttachments
+                                    ></app-jobs-attachments>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10 h-100">
+                <div class="tab-content text-muted mt-3 mt-lg-0 h-100">
+                    <div [ngbNavOutlet]="CustomVertical" class="h-100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <!-- Survey Navigation (Tab 0 & 2) -->
+        <div class="row w-100" *ngIf="activeTab == 0 || activeTab == 2">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10 d-flex align-items-start gap-3 mt-4">
+                <button type="button" style="width: 7em;" class="btn btn-primary text-decoration-none btn-label previestab" (click)="surveyBack()" *ngIf="surveyActiveTab != 0">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                <button type="button" class="btn btn-primary btn-label right ms-auto nexttab" (click)="handleNextClick()">
+                    <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isSurveyLoading"></i>
+                    <span class="flex-grow-1 me-2">Next</span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isSurveyLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Add Note Button for Job Details Tab -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;" *ngIf="activeTab == 5">
+    <button 
+        type="button" 
+        class="btn btn-primary shadow-lg"
+        (click)="addNote()"
+        title="Add Note">
+        <i class="ri-add-line me-2"></i>
+        Add Note
+    </button>
+</div>
+
+<!-- <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;" *ngIf="activeTab == 6">
+    <button 
+        type="button" 
+        class="btn btn-primary shadow-lg"
+        (click)="addAttachments()"
+        title="Add Note">
+        <i class="ri-add-line me-2"></i>
+        Add Attachment
+    </button>
+</div> -->

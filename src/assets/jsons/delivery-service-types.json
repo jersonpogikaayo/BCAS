@@ -1,0 +1,49 @@
+[{
+        "prettyName": "1 Person Car Parcel",
+        "technicalName": "1-person-car-parcel"
+    },
+    {
+        "prettyName": "1 Person Cargo or Sprinter",
+        "technicalName": "1-person-cargo-or-sprinter"
+    },
+    {
+        "prettyName": "1 Person Dock to Dock (Pallet Jack Only) without liftgate",
+        "technicalName": "1-person-dock-to-dock-pallet-jack-only-without-liftgate"
+    },
+    {
+        "prettyName": "1 Person DC to Dock (Pallet Jack Only) with liftgate",
+        "technicalName": "1-person-dc-to-dock-pallet-jack-only-with-liftgate"
+    },
+    {
+        "prettyName": "1 Person DC to Dock or Storefront (hand truck or pallet) with liftgate",
+        "technicalName": "1-person-dc-to-dock-or-storefront-hand-truck-or-pallet-with-liftgate"
+    },
+    {
+        "prettyName": "1 Person Curbside with liftgate",
+        "technicalName": "1-person-curbside-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person Curbside with liftgate",
+        "technicalName": "2-person-curbside-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person Threshold with liftgate",
+        "technicalName": "2-person-threshold-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person Room of Choice with liftgate",
+        "technicalName": "2-person-room-of-choice-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person White Glove with liftgate",
+        "technicalName": "2-person-white-glove-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person Assembly with liftgate",
+        "technicalName": "2-person-assembly-with-liftgate"
+    },
+    {
+        "prettyName": "2 Person Install with liftgate",
+        "technicalName": "2-person-install-with-liftgate"
+    }
+]

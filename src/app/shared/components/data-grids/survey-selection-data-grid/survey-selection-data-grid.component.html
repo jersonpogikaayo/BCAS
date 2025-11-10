@@ -1,0 +1,99 @@
+<div class="table-responsive table-card mb-1 h-100">
+  <table class="table table-nowrap mb-0">
+      <thead class="table-light">
+          <tr>
+              <th scope="col">
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="cardtableCheck" (change)="checkAll($event)" [checked]="selectedCheckedEquipment.length != 0">
+                      <!-- <label class="form-check-label" for="cardtableCheck"></label> -->
+                  </div>
+              </th>
+              <th scope="col">Id</th>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Equipment Type</th>
+              <th scope="col">Asset Number</th>
+              <th scope="col">Serial Number</th>
+              <th scope="col">Action <div class="action-button">
+                      <button type="button" class="btn btn-sm btn-primary" [disabled]="selectedCheckedEquipment.length === 0" (click)="autoSelect()">Autoselect</button>
+                  </div>
+              </th>
+          </tr>
+      </thead>
+      <tbody>
+          <ng-container *ngFor="let row of rows; let i = index">
+              <tr [class.active]="row.expanded">
+                  <td>
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="cardtableCheck{{i}}" [checked]="row.selected" (click)="checkedEquipment($event, i, row)" [checked]="isChecked(row)">
+                          <label class="form-check-label" for="cardtableCheck{{i}}"></label>
+                      </div>
+                  </td>
+                  <td (click)="toggleRow(row)">{{ row.equipmentId }}</td>
+                  <td (click)="toggleRow(row)">{{ row.equipmentName }}</td>
+                  <td (click)="toggleRow(row)">{{ row.equipmentTypeName }}</td>
+                  <td (click)="toggleRow(row)">{{ row.assetNumber }}</td>
+                  <td (click)="toggleRow(row)">{{ row.serialNumber }}</td>
+                  <td>
+                      <button type="button" class="btn btn-sm btn-primary" (click)="toggleRow(row)">View Details</button>
+                  </td>
+              </tr>
+              <tr *ngIf="row.expanded">
+                  <td [attr.colspan]="colspan">
+                      <div class="nested">
+                          <table class="table table-bordered table-nowrap">
+                              <thead>
+                                  <tr>
+                                      <th scope="col"></th>
+                                      <th scope="col">Name</th>
+                                      <!-- <th scope="col">Title</th><th scope="col">Job Type</th> -->
+                                      <th scope="col">Link</th>
+                                      <th scope="col">Action</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let item of row.surveys; let surveyIndex = index">
+                                      <td>
+                                          <input class="form-check-input" type="checkbox" value="" [checked]="item.selected" (click)="selectSurvey(item, row, $event, i, surveyIndex)">
+                                      </td>
+                                      <td>
+                                          <strong>{{ item.name }}</strong>
+                                      </td>
+                                      <!-- <td>{{ item.title }}</td><td>{{ item.jobTypeName }}</td> -->
+                                      <td>{{ checkLink(item) }}</td>
+                                      <td>
+                                          <button type="button" class="btn btn-sm btn-primary" (click)="preview(content, item)">Preview</button>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </td>
+              </tr>
+          </ng-container>
+      </tbody>
+  </table>
+</div>
+
+
+<!-- Popup Modal -->
+<ng-template #content role="document" let-modal>
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click');"></button>
+    </div>
+    <div class="row modal-body content-form">
+        <app-survey-process 
+            [survey]="viewSurvey" 
+            [currentAnswers]="[]" 
+            [jobStatus]="'is_completed'" 
+            (stepChanged)="hasProceed($event)"
+            (surveyCompleted)="isSurveyFinished($event)"
+            #surveyProcessRef>
+        </app-survey-process>
+    </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-label right ms-auto nexttab btn-next" data-nexttab="v-pills-payment-tab" (click)="surveyProcessRef.proceedToNext()">
+            <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+            <span class="flex-grow-1 me-2"> Next </span>
+        </button>
+    </div>
+</ng-template>

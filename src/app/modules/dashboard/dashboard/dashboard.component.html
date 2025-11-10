@@ -1,0 +1,32 @@
+  <div class="dashboard-container" *ngIf="currentUser$ | async as user">
+    
+    <!-- Admin Dashboard -->
+    <app-admin-dashboard 
+      *ngIf="isAdmin(user)"
+      [user]="user">
+    </app-admin-dashboard>
+
+    <!-- Manager Dashboard -->
+    <app-manager-dashboard 
+      *ngIf="hasRole(user, UserRole.MANAGER) && !isAdmin(user)"
+      [user]="user">
+    </app-manager-dashboard>
+
+    <!-- Engineer Dashboard -->
+    <app-engineer-dashboard 
+      *ngIf="hasRole(user, UserRole.ENGINEER) && !isAdmin(user) && !hasRole(user, UserRole.MANAGER)"
+      [user]="user">
+    </app-engineer-dashboard>
+
+    <!-- Fallback for unknown roles -->
+    <div *ngIf="!(userRole$ | async)" class="alert alert-warning">
+      <h4>Access Restricted</h4>
+      <p>Your account role is not recognized. Please contact your administrator.</p>
+    </div>
+  </div>
+
+  <!-- No User Found - inside layout -->
+  <div *ngIf="!(currentUser$ | async)" class="alert alert-danger">
+    <h4>No User Found</h4>
+    <p>Please log in to access the dashboard.</p>
+  </div>

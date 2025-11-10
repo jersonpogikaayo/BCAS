@@ -1,0 +1,289 @@
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row h-100">
+            <div class="col-lg-2 h-100" style="position: fixed;">
+                <div class="" role="tablist" aria-orientation="vertical">
+                    <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                        
+                        <!-- Equipment Checks -->
+                        <li [ngbNavItem]="0" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Equipment Checks 
+                            </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-equipment-checks 
+                                        #equipmentChecksRef
+                                        [job]="job"
+                                        [site]="sites"
+                                        [conditionScaleItems]="conditionScale">
+                                    </app-equipment-checks>
+                                </div>
+                            </ng-template>
+                        </li>
+                        
+                        <!-- Survey Process -->
+                        <li [ngbNavItem]="1" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-clipboard-line d-block fs-20 mb-1"></i>
+                                {{ survey.title || 'Survey Process' }}
+                            </a>
+                           <ng-template ngbNavContent>
+                            <div class="step-content p-4">
+                                <app-survey-process 
+                                    [survey]="survey" 
+                                    [job]="job"
+                                    [currentAnswers]="currentAnswers"
+                                    (stepChanged)="onSurveyStepChanged($event)"
+                                    (surveyCompleted)="onSurveyCompleted($event)"
+                                    (surveyFailed)="surveyFailed($event)"
+                                    #surveyProcess>
+                                </app-survey-process>
+                            </div>
+                        </ng-template>
+                        
+                        <!-- Test Equipment -->
+                        <li [ngbNavItem]="2" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Test Equipment (optional) 
+                            </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-test-equipments
+                                        [isCompleted]="isCompleted"
+                                        [defaultEquipment]="job.testEquipment"
+                                        (equipmentSelected)="onTestEquipmentSelected($event)"
+                                        >
+                                    </app-test-equipments>
+                                    
+                                </div>
+                            </ng-template>
+                        </li>
+                        
+                        <!-- Summary -->
+                        <li [ngbNavItem]="3" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-mail-line d-block fs-20 mb-1"></i> Summary 
+                            </a>
+                            <ng-template ngbNavContent>
+                                <app-jobs-summary
+                                    [summaryData]="getSummaryData()"
+                                    [currentAnswers]="currentAnswers"
+                                    [isCompleted]="isCompleted">
+                                </app-jobs-summary>
+                            </ng-template>
+                        </li>
+                        
+                        <!-- Sign Off -->
+                        <li [ngbNavItem]="4" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Sign Off 
+                            </a>
+                            <ng-template ngbNavContent>
+                                <div class="row modal-body content-form">
+                                    <form [formGroup]="signatureForm">
+                                        <div class="row mb-3">
+                                            <div class="col-lg-1 user-form-label">
+                                                <label class="form-label" for="name">Name</label>
+                                            </div>
+                                            <div class="col-lg-10 form-values">
+                                                <input type="text" id="name-field" class="form-control" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                                                <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                                                    <div *ngIf="f['name'].errors['required']">Name is required</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-lg-1 user-form-label"></div>
+                                            <div class="col-lg-10 form-values">
+                                                <div class="signature-placeholder p-4">
+                                            <app-signature-pad 
+                                                #signaturePad
+                                                [isDisabled]="false"
+                                                (imageUrl)="onSignatureCaptured($event)"
+                                                >
+                                            </app-signature-pad>
+                                        </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </ng-template>
+                        </li>
+                        
+                        <!-- Customer Feedback -->
+                        <li [ngbNavItem]="5" [disabled]="!isCompleted">
+                            <a ngbNavLink>
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Customer Feedback 
+                            </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-survey-process 
+                                        [survey]="customerFeedackSurvey" 
+                                        [job]="job"
+                                        (stepChanged)="onSurveyStepChanged($event)"
+                                        (surveyCompleted)="onSurveyCompleted($event)"
+                                        #surveyProcess>
+                                    </app-survey-process>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 h-100"></div>
+            <div class="col-lg-10 h-100">
+                <div class="tab-content text-muted mt-3 mt-lg-0 h-100">
+                    <div [ngbNavOutlet]="CustomVertical" class="h-100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Survey Tab Footer -->
+    <div class="modal-footer" *ngIf="activeTab == 0 || activeTab == 1">
+        <div class="row w-100">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10 d-flex align-items-start gap-3 mt-4">
+                <!-- Back to Equipment Checks (when on first survey step) -->
+                <button type="button" 
+                        style="width: 7em;" 
+                        class="btn btn-primary text-decoration-none btn-label previestab" 
+                        (click)="isBackFromEquipment()" 
+                        *ngIf="surveyActiveTab == 0">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                
+                <!-- Back to Previous Survey Step (when not on first survey step) -->
+                <button type="button" 
+                        style="width: 7em;" 
+                        class="btn btn-primary text-decoration-none btn-label previestab" 
+                        (click)="surveyBack()" 
+                        *ngIf="surveyActiveTab != 0">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                
+                <button type="button" 
+                        style="width: 7em;" 
+                        class="btn btn-primary" 
+                        *ngIf="!isCompleted" 
+                        (click)="manualFail()">
+                    Fail
+                </button>
+                
+                <button type="button" 
+                        style="width: 7em;" 
+                        class="btn btn-primary" 
+                        *ngIf="!isCompleted" 
+                        (click)="pauseJob()">
+                    Pause
+                </button>
+
+                <button type="button" 
+                        style="width: 10em;" 
+                        class="btn btn-primary" 
+                        *ngIf="!isCompleted" 
+                        (click)="cannotLocateJob()">
+                    Cannot Locate
+                </button>
+                
+                <!-- Next/Complete Button -->
+                <button type="button" 
+                        class="btn btn-primary btn-label right ms-auto nexttab" 
+                        (click)="activeTab === 0 ? submitEquipmentPreCheck() : handleNextClick()">
+                    <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                    <span class="flex-grow-1 me-2">{{ isLastStep ? 'Complete Survey' : 'Next' }}</span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer feedback Tab Footer -->
+    <div class="modal-footer" *ngIf="activeTab == 5">
+        <div class="row w-100">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10 d-flex align-items-start gap-3 mt-4">
+                
+                <!-- Back to Previous Survey Step (when not on first survey step) -->
+                <button type="button" 
+                        style="width: 7em;" 
+                        class="btn btn-primary text-decoration-none btn-label previestab" 
+                        (click)="surveyBack()" 
+                        *ngIf="surveyActiveTab != 0">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                
+                <!-- Next/Complete Button -->
+                <button type="button" 
+                        class="btn btn-primary btn-label right ms-auto nexttab" 
+                        (click)="handleNextClick()">
+                    <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                    <span class="flex-grow-1 me-2">{{ isLastStep ? 'Complete Feedback' : 'Next' }}</span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Other Tabs Footer -->
+    <div class="modal-footer" *ngIf="activeTab != 0 && activeTab != 1">
+        <div class="row w-100">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10 d-flex align-items-start gap-3 mt-4">
+                <button type="button" style="width: 7em;" class="btn btn-primary text-decoration-none btn-label previestab" 
+                        data-previous="pills-gen-info-tab" (click)="isBackFromEquipment()" *ngIf="activeTab == 2">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                <button type="button" style="width: 7em;" class="btn btn-primary text-decoration-none btn-label previestab" 
+                        data-previous="pills-gen-info-tab" *ngIf="activeTab == 3">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back 
+                </button>
+                <button type="button" style="width: 7em;" class="btn btn-primary text-decoration-none btn-label previestab" 
+                        data-previous="pills-gen-info-tab" (click)="close()" *ngIf="activeTab == 0">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Close 
+                </button>
+                <ng-container *ngIf="activeTab != 0 && activeTab != 1 && activeTab != 5">
+                    <button type="button" class="btn btn-primary btn-label right ms-auto nexttab" 
+                            data-nexttab="v-pills-payment-tab" (click)="nextStep()" *ngIf="activeTab != 4">
+                        <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                        <span class="flex-grow-1 me-2"> Next </span>
+                        <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-primary text-decoration-none btn-label previousTab" 
+                            datatab="v-pills-payment-tab" (click)="submitSignOff('signOffLater')" *ngIf="activeTab == 4"> 
+                        Sign Off Later 
+                        <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoadingSignOffLater">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-label right ms-auto nexttab" 
+                            datatab="v-pills-payment-tab" (click)="submitSignOff('')" *ngIf="activeTab == 4">
+                        <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                        <span class="flex-grow-1 me-2"> Submit </span>
+                        <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
+                    </button>
+                </ng-container>
+                <button type="button" class="btn btn-primary btn-label right ms-auto nexttab" 
+                        datatab="v-pills-payment-tab" (click)="submitEquipmentPreCheck()" *ngIf="activeTab == 0">
+                    <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

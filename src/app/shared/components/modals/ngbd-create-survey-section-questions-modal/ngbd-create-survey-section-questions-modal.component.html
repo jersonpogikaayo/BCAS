@@ -1,0 +1,464 @@
+<div class="modal-content">
+
+    <div class="modal-header bg-light p-3">
+        <h5 class="modal-description" id="exampleModalLabel">
+            {{ modalFor === 'sections' ? 'Add Section' : modalFor === 'questions' ? 'Add Question' : '' }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <form [formGroup]="sectionForm" *ngIf="modalFor === 'sections' || modalFor === 'usections'">
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="nameInput" class="form-label">Name <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="nameInput" placeholder="Enter Name" formControlName="name" [ngClass]="{ 'is-invalid': submitted && cSectionForm['name'].errors }">
+                        <div *ngIf="submitted && cSectionForm['name'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cSectionForm['name'].errors['required']">Name is required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Title <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="titleInput" placeholder="Enter Title" formControlName="title" [ngClass]="{ 'is-invalid': submitted && cSectionForm['title'].errors }">
+                        <div *ngIf="submitted && cSectionForm['title'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cSectionForm['title'].errors['required']">Title is required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Description <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10">
+                        <div class="form-check-right form-switch form-switch-lg" dir="ltr">
+                            <input type="checkbox" class="form-check-input" id="customSwitchsizelg" (change)="toggleHtmlDesc()" formControlName="htmlDescOn" [checked]="cSectionForm['htmlDescOn'].value">
+                            <label class="form-check-label toggle-label" for="customSwitchsizelg">HTML</label>
+                        </div>
+                        <!-- <input type="text" class="form-control" id="descriptionInput" placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && cSectionForm['description'].errors }">
+                        <div *ngIf="submitted && cSectionForm['description'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cSectionForm['description'].errors['required']">Description is required</div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <angular-editor class="form-control" [placeholder]="'Enter text here...'" formControlName="description" *ngIf="cSectionForm['htmlDescOn'].value" [config]="config"></angular-editor>
+                    <textarea class="form-control" rows="3" id="descriptionInput" placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && cSectionForm['description'].errors }" *ngIf="!cSectionForm['htmlDescOn'].value"></textarea>
+                    <div *ngIf="submitted && cSectionForm['description'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="cSectionForm['description'].errors['required']">Description is required</div>
+                    </div>
+                </div>
+                
+            </form>
+            <form [formGroup]="questionsForm" *ngIf="modalFor === 'questions' || modalFor === 'uquestions'">
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Description <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10">
+                        <div class="form-check-right form-switch form-switch-lg" dir="ltr">
+                            <input type="checkbox" class="form-check-input" id="customSwitchsizelg" [checked]="htmlOn" (change)="toggleHtml()">
+                            <label class="form-check-label toggle-label" for="customSwitchsizelg">HTML</label>
+                        </div>
+                        <!-- <input type="text" class="form-control" id="descriptionInput" placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['description'].errors }"> -->
+                        <!-- <textarea class="form-control" rows="3" class="form-control" id="descriptionInput" placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['description'].errors }"></textarea>
+                        <div *ngIf="submitted && cQuestionForm['description'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cQuestionForm['description'].errors['required']">Description is required</div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <angular-editor class="form-control" [placeholder]="'Enter text here...'" formControlName="description" *ngIf="htmlOn"  [config]="config"></angular-editor>
+                    <textarea class="form-control" rows="3" class="form-control" id="descriptionInput" placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['description'].errors }" *ngIf="!htmlOn"></textarea>
+                    <div *ngIf="submitted && cQuestionForm['description'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="cQuestionForm['description'].errors['required']">Description is required</div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="failValueInput" class="form-label">Failure Value <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <input type="text" class="form-control" id="failValueInput" placeholder="Enter Fail failValue" formControlName="failValue" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['failValue'].errors }">
+                        <div *ngIf="submitted && cQuestionForm['failValue'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cQuestionForm['failValue'].errors['required']">Failure Value is required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Question Type <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <ng-select class="custom form-control" [items]="questionTypeData" bindLabel="type" bindValue="id" formControlName="questionTypeId">
+                        </ng-select>
+                        <div *ngIf="submitted && cQuestionForm['questionTypeId'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cQuestionForm['questionTypeId'].errors['required']">Question Type is required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Is Optional <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <div class="form-check form-switch form-switch-lg" dir="ltr">
+                            <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="isOptional" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['isOptional'].errors }">
+                        </div>
+                        <div *ngIf="submitted && cQuestionForm['isOptional'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cQuestionForm['isOptional'].errors['required']">Is Optional is required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Requires Completion on Survey Failure? <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <div class="form-check form-switch form-switch-lg" dir="ltr">
+                            <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="requiresCompletionOnFail" [ngClass]="{ 'is-invalid': submitted && cQuestionForm['requiresCompletionOnFail'].errors }">
+                        </div>
+                        <div *ngIf="submitted && cQuestionForm['requiresCompletionOnFail'].errors" class="invalid-feedback" align="left">
+                            <div *ngIf="cQuestionForm['requiresCompletionOnFail'].errors['required']">Requires Completion on Survey Failure is Required</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 4 || cQuestionForm['questionTypeId'].value === 5">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <button type="button" class="btn btn-danger w-sm update-btn" (click)="addOptions()">Add Option</button>
+                            </div>
+                            <div class="col-lg-8">
+                                <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                                    <div class="example-box" *ngFor="let option of options; let indx = index;" cdkDrag>{{option.text}} <span>
+                                        <button type="button" class="btn btn-primary w-sm update-btn" (click)="deleteOption(option, indx)">Delete Option</button>
+                                    </span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Question Validation Options</label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <cdk-accordion class="example-accordion">
+                            <cdk-accordion-item
+                            *ngFor="let item of items; let index = index;"
+                            #accordionItem="cdkAccordionItem"
+                            class="example-accordion-item"
+                            role="button"
+                            tabindex="0"
+                            [attr.id]="'accordion-header-' + index"
+                            [attr.aria-expanded]="accordionItem.expanded"
+                            [attr.aria-controls]="'accordion-body-' + index">
+                            <div class="example-accordion-item-header" (click)="accordionItem.toggle()">
+                                {{ item }}
+                                <span class="example-accordion-item-description">
+                                Click to {{ accordionItem.expanded ? 'close' : 'open' }}
+                                </span>
+                            </div>
+                            <div
+                                class="example-accordion-item-body"
+                                role="region"
+                                [style.display]="accordionItem.expanded ? '' : 'none'"
+                                [attr.id]="'accordion-body-' + index"
+                                [attr.aria-labelledby]="'accordion-header-' + index">
+                                
+                                <form [formGroup]="questionsValidationForm" class="validation-form">
+                                    <div class="row mb-3">
+                                        <div class="col-lg-2">
+                                            <label for="failErrorMessageInput" class="form-label">Fail Error Message <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea type="text" rows="3" class="form-control" id="failErrorMessageInput" placeholder="Enter Fail Error Message" formControlName="failErrorMessage" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['failErrorMessage'].errors }">
+                                            </textarea>
+                                            <div *ngIf="submitted && cquestionsValidationForm['failErrorMessage'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['failErrorMessage'].errors['required']">Fail Error Message is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-lg-2">
+                                            <label for="emptyErrorMessage" class="form-label">Empty Error Message <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea type="text" rows="3" class="form-control" id="emptyErrorMessage" placeholder="Enter Fail Error Message" formControlName="emptyErrorMessage" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['emptyErrorMessage'].errors }">
+                                            </textarea>
+                                            <div *ngIf="submitted && cquestionsValidationForm['emptyErrorMessage'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['emptyErrorMessage'].errors['required']">Empty Error Message is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 2">
+                                        <div class="col-lg-2">
+                                            <label for="failRegexInput" class="form-label">Failure Regex Pattern<span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="failRegexInput" placeholder="Enter Fail Regex Message" formControlName="failRegex" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['failRegex'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['failRegex'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['failRegex'].errors['required']">Failure Regex Pattern</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 2">
+                                        <div class="col-lg-2">
+                                            <label for="maskRegexInput" class="form-label">Text Mask Regex Pattern <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="maskRegexInput" placeholder="Enter Mask Regex" formControlName="maskRegex" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['maskRegex'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['maskRegex'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['maskRegex'].errors['required']">Text Mask Regex Pattern is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 2">
+                                        <div class="col-lg-2">
+                                            <label for="maskErrorMessageInput" class="form-label">Text Mask Error Message <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea type="text" rows="3" class="form-control" id="maskErrorMessageInput" placeholder="Enter Mask Error Message" formControlName="maskErrorMessage" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['maskErrorMessage'].errors }">
+                                            </textarea>
+                                            <div *ngIf="submitted && cquestionsValidationForm['maskErrorMessage'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['maskErrorMessage'].errors['required']">Text Mask Error Message is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 3 || cQuestionForm['questionTypeId'].value === 6 || cQuestionForm['questionTypeId'].value === 12">
+                                        <div class="col-lg-2">
+                                            <label for="lowerFailInput" class="form-label">Lower Failure Bound <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="lowerFailInput" placeholder="Enter Fail Error Message" formControlName="lowerFail" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['lowerFail'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['lowerFail'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['lowerFail'].errors['required']">Lower Failure Bound is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 3 || cQuestionForm['questionTypeId'].value === 6 || cQuestionForm['questionTypeId'].value === 12">
+                                        <div class="col-lg-2">
+                                            <label for="upperFail" class="form-label">Upper Failure Bound <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="upperFail" placeholder="Enter Upper Fail" formControlName="upperFail" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['upperFail'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['upperFail'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['upperFail'].errors['required']">Upper Failure Bound is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 3 || cQuestionForm['questionTypeId'].value === 6 || cQuestionForm['questionTypeId'].value === 12">
+                                        <div class="col-lg-2">
+                                            <label for="maxValueInput" class="form-label">Max Possible Value <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="maxValueInput" placeholder="Enter Fail Error Message" formControlName="maxValue" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['maxValue'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['maxValue'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['maxValue'].errors['required']">Max Possible Value is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 3 || cQuestionForm['questionTypeId'].value === 6 || cQuestionForm['questionTypeId'].value === 12">
+                                        <div class="col-lg-2">
+                                            <label for="minValueInput" class="form-label">Min Possible Value <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="minValueInput" placeholder="Enter Fail Error Message" formControlName="minValue" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['minValue'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['minValue'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['minValue'].errors['required']">Min Possible Value is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 6 || cQuestionForm['questionTypeId'].value === 12">
+                                        <div class="col-lg-2">
+                                            <label for="stepInput" class="form-label">Step Increments <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="stepInput" placeholder="Enter Fail Error Message" formControlName="step" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['step'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['step'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['step'].errors['required']">Step Increments is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="aLowerFail" class="form-label">Absolute Lower Fail <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="date" class="form-control" id="aLowerFail" formControlName="absoluteLowerFail" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['absoluteLowerFail'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['absoluteLowerFail'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['absoluteLowerFail'].errors['required']">Absoulute Lower Fail is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="aUpperFail" class="form-label">Absolute Upper Fail <span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="date" class="form-control" id="aUpperFail" formControlName="absoluteUpperFail" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['absoluteUpperFail'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['absoluteUpperFail'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['absoluteUpperFail'].errors['required']">Absoulute Upper Fail is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="rLowerFail" class="form-label">Relative Lower Fail Days<span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="rLowerFail" formControlName="relativeLowerFailDays" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['relativeLowerFailDays'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['relativeLowerFailDays'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['relativeLowerFailDays'].errors['required']">Relatice Lower Fail Days is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="rUpperFail" class="form-label">Relative Upper Fail Days<span class="text-danger"></span></label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="rUpperFail" formControlName="relativeUpperFailDays" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['relativeUpperFailDays'].errors }">
+                                            <div *ngIf="submitted && cquestionsValidationForm['relativeUpperFailDays'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['relativeUpperFailDays'].errors['required']">Relatice Upper Fail Days is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="descriptionInput" class="form-label">Restrict Date Selection <span class="text-danger">*</span></label>
+                                        </div>
+                                        <div class="col-lg-10 optional-switch">
+                                            <div class="form-check form-switch form-switch-lg" dir="ltr">
+                                                <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="restrictDateSelection" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['restrictDateSelection'].errors }">
+                                            </div>
+                                            <div *ngIf="submitted && cquestionsValidationForm['restrictDateSelection'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['restrictDateSelection'].errors['required']">Restrict Date Selection is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3" *ngIf="cQuestionForm['questionTypeId'].value === 1">
+                                        <div class="col-lg-2">
+                                            <label for="descriptionInput" class="form-label">Validate On Date Only <span class="text-danger">*</span></label>
+                                        </div>
+                                        <div class="col-lg-10 optional-switch">
+                                            <div class="form-check form-switch form-switch-lg" dir="ltr">
+                                                <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="validateOnDateOnly" [ngClass]="{ 'is-invalid': submitted && cquestionsValidationForm['validateOnDateOnly'].errors }">
+                                            </div>
+                                            <div *ngIf="submitted && cquestionsValidationForm['validateOnDateOnly'].errors" class="invalid-feedback" align="left">
+                                                <div *ngIf="cquestionsValidationForm['validateOnDateOnly'].errors['required']">Validate on date only is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            </cdk-accordion-item>
+                        </cdk-accordion>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">
+                        <label for="descriptionInput" class="form-label">Question Display Options</label>
+                    </div>
+                    <div class="col-lg-10 optional-switch">
+                        <cdk-accordion class="example-accordion">
+                            <cdk-accordion-item
+                            *ngFor="let item of items; let index = index;"
+                            #questionDisplayOptionAccordion="cdkAccordionItem"
+                            class="example-accordion-item"
+                            role="button"
+                            tabindex="1"
+                            [attr.id]="'accordion-header-' + index"
+                            [attr.aria-expanded]="questionDisplayOptionAccordion.expanded"
+                            [attr.aria-controls]="'accordion-body-' + index">
+                            <div class="example-accordion-item-header" (click)="questionDisplayOptionAccordion.toggle()">
+                                {{ item }}
+                                <span class="example-accordion-item-description">
+                                Click to {{ questionDisplayOptionAccordion.expanded ? 'close' : 'open' }}
+                                </span>
+                            </div>
+                            <div
+                                class="example-accordion-item-body"
+                                role="region"
+                                [style.display]="questionDisplayOptionAccordion.expanded ? '' : 'none'"
+                                [attr.id]="'accordion-body-' + index"
+                                [attr.aria-labelledby]="'accordion-header-' + index">
+                                <div class="row mb-3">
+                                    <div class="col-lg-2">
+                                        <label class="form-label">Full Width <span class="text-danger"></span></label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <div class="form-check-right form-switch form-switch-lg" dir="ltr">
+                                            <input type="checkbox" class="form-check-input" id="customSwitchsizelg" [checked]="fullWidth" (change)="toggleFullWidth()" formControlName="fullWidth">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </cdk-accordion-item>
+                        </cdk-accordion>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer bottom-btn">
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary" (click)="save()" *ngIf="modalFor === 'sections'">
+                <span class="flex-grow-1 me-2"> Add </span>
+                <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+            </button>
+            <button type="submit" class="btn btn-primary" (click)="save()" *ngIf="modalFor === 'usections'">
+                <span class="flex-grow-1 me-2"> Update </span>
+                <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+            </button>
+        </div>
+        <div class="text-end" *ngIf="modalFor === 'questions'">
+            <button type="submit" class="btn btn-primary" (click)="save()">
+                <span class="flex-grow-1 me-2"> Add </span>
+                <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+            </button>
+        </div>
+
+        <div class="text-end" *ngIf="modalFor === 'uquestions'">
+            <button type="submit" class="btn btn-primary" (click)="save()">
+                <span class="flex-grow-1 me-2"> Update </span>
+                <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

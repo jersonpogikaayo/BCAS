@@ -1,0 +1,332 @@
+<!-- <div class="modal-header bg-light p-3">
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close('end')"></button>
+</div> -->
+<div class="row modal-body h-100">
+  <div class="col-xl-12">
+    <div class="mb-4">
+      <div class="row question-row">
+        <form [formGroup]="checkForm">
+            <app-section-header [title]="'Confirm Equipment Detail is Correct'"></app-section-header>
+
+          <!-- Serial Number Check -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  <span *ngIf="job?.equipment?.serialNumber; else noSerial">
+                    Is Equipment Serial Number correct? 
+                    <span class="text-primary">({{ job.equipment.serialNumber }})</span>
+                  </span>
+                  <ng-template #noSerial>
+                    Is Equipment Serial Number correct?
+                  </ng-template>
+                </label>
+                <small class="form-text text-muted d-block" *ngIf="showFields.serial">
+                  Please enter the correct Serial Number listed on the item.
+                </small>
+              </div>
+              <div class="col-lg-4">
+                <div class="radio-group mb-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="serialYes" 
+                           formControlName="serialNumber" [value]="true" 
+                           (change)="checkBoxEvent($event, 'serialNumber', 'Yes')">
+                    <label class="form-check-label" for="serialYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="serialNo" 
+                           formControlName="serialNumber" [value]="false" 
+                           (change)="checkBoxEvent($event, 'serialNumber', 'No')">
+                    <label class="form-check-label" for="serialNo">No</label>
+                  </div>
+                </div>
+                <div *ngIf="showFields.serial" class="correction-input">
+                  <input type="text" class="form-control" formControlName="newSerialNumber" 
+                         placeholder="Enter correct serial number"
+                         [class.is-invalid]="submitted && f['newSerialNumber'].errors">
+                  <div *ngIf="submitted && f['newSerialNumber'].errors" class="invalid-feedback">
+                    Serial number is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Asset Number Check -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  <span *ngIf="job?.equipment?.assetNumber; else noAsset">
+                    Is Equipment Asset Number correct? 
+                    <span class="text-primary">({{ job.equipment.assetNumber }})</span>
+                  </span>
+                  <ng-template #noAsset>
+                    Is the Equipment Asset Number correct?
+                  </ng-template>
+                </label>
+                <small class="form-text text-muted d-block" *ngIf="showFields.asset">
+                  Please enter the correct Asset Number listed on the item.
+                </small>
+              </div>
+              <div class="col-lg-4">
+                <div class="radio-group mb-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="assetYes" 
+                           formControlName="assetNumber" [value]="true" 
+                           (change)="checkBoxEvent($event, 'assetNumber', 'Yes')">
+                    <label class="form-check-label" for="assetYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="assetNo" 
+                           formControlName="assetNumber" [value]="false" 
+                           (change)="checkBoxEvent($event, 'assetNumber', 'No')">
+                    <label class="form-check-label" for="assetNo">No</label>
+                  </div>
+                </div>
+                <div *ngIf="showFields.asset" class="correction-input">
+                  <input type="text" class="form-control" formControlName="newAssetNumber" 
+                         placeholder="Enter correct asset number"
+                         [class.is-invalid]="submitted && f['newAssetNumber'].errors">
+                  <div *ngIf="submitted && f['newAssetNumber'].errors" class="invalid-feedback">
+                    Asset number is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Section -->
+        <app-section-header [title]="'Equipment Current Location'"></app-section-header>
+          
+
+          <!-- Current Location Display -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-6">
+                <strong>Department:</strong> {{ getDepartmentById(job.equipment.departmentId) !== undefined ? getDepartmentById(job.equipment.departmentId).name : 'N/A' }}
+              </div>
+              <div class="col-6">
+                <strong>Site:</strong> {{ getSiteString() || 'N/A' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Verification -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  Is Equipment in the correct location?
+                </label>
+              </div>
+              <div class="col-lg-4">
+                <div class="radio-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="locationYes" 
+                           formControlName="location" [value]="true" 
+                           (change)="checkBoxEvent($event, 'location', 'Yes')">
+                    <label class="form-check-label" for="locationYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="locationNo" 
+                           formControlName="location" [value]="false" 
+                           (change)="checkBoxEvent($event, 'location', 'No')">
+                    <label class="form-check-label" for="locationNo">No</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Site Correction (if location is wrong) -->
+          <div *ngIf="showFields.location" class="location-correction">
+            <div class="equipment-check-item mb-3">
+              <div class="row">
+                <div class="col-lg-8">
+                  <label class="form-label fw-semibold">
+                    Is Equipment at the correct site?
+                  </label>
+                </div>
+                <div class="col-lg-4">
+                  <div class="radio-group">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="siteYes" 
+                             formControlName="site" [value]="true" 
+                             (change)="checkBoxEvent($event, 'site', 'Yes')">
+                      <label class="form-check-label" for="siteYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="siteNo" 
+                             formControlName="site" [value]="false" 
+                             (change)="checkBoxEvent($event, 'site', 'No')">
+                      <label class="form-check-label" for="siteNo">No</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Site Selection -->
+            <div *ngIf="showFields.site" class="equipment-check-item mb-3">
+              <div class="row">
+                <div class="col-lg-8">
+                  <label class="form-label fw-semibold">Select Correct Site:</label>
+                </div>
+                <div class="col-lg-4">
+                  <ng-select class="custom form-control" 
+                             [items]="site" 
+                             bindLabel="name" 
+                             bindValue="id" 
+                             formControlName="newSiteId" 
+                             placeholder="Select site..."
+                             [class.is-invalid]="submitted && f['newSiteId'].errors" 
+                             (change)="selectSite($event)">
+                  </ng-select>
+                  <div *ngIf="submitted && f['newSiteId'].errors" class="invalid-feedback">
+                    Site selection is required
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Department Selection -->
+            <div class="equipment-check-item mb-3">
+              <div class="row">
+                <div class="col-lg-8">
+                  <label class="form-label fw-semibold">Select Correct Department:</label>
+                </div>
+                <div class="col-lg-4">
+                  <ng-select class="custom form-control" 
+                             [items]="siteDepartment" 
+                             bindLabel="name" 
+                             bindValue="id" 
+                             formControlName="newDepartmentId" 
+                             placeholder="Select department..."
+                             [class.is-invalid]="submitted && f['newDepartmentId'].errors">
+                  </ng-select>
+                  <div *ngIf="submitted && f['newDepartmentId'].errors" class="invalid-feedback">
+                    Department selection is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Condition Assessment Section -->
+        <app-section-header [title]="'Equipment Current Condition'"></app-section-header>
+
+
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  Please assess the equipment condition:
+                </label>
+              </div>
+              <div class="col-lg-4">
+                <ng-select class="custom form-control" 
+                           [items]="conditionScaleItems" 
+                           bindLabel="name" 
+                           bindValue="id" 
+                           formControlName="conditionScaleId" 
+                           placeholder="Select condition..."
+                           [class.is-invalid]="submitted && f['conditionScaleId'].errors">
+                </ng-select>
+                <div *ngIf="submitted && f['conditionScaleId'].errors" class="invalid-feedback">
+                  Condition assessment is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GMDN/ECRI Section -->
+        <app-section-header [title]="'GMDN/ECRI Required Information'"></app-section-header>
+
+
+          <!-- GMDN Check -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  <span *ngIf="job?.equipment?.gmdn; else noGmdn">
+                    Is Equipment GMDN correct? 
+                    <span class="text-primary">({{ job.equipment.gmdn }})</span>
+                  </span>
+                  <ng-template #noGmdn>
+                    Equipment has no logged GMDN, please enter this to continue.
+                  </ng-template>
+                </label>
+              </div>
+              <div class="col-lg-4">
+                <div *ngIf="job?.equipment?.gmdn" class="radio-group mb-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gmdnYes" 
+                           formControlName="gmdn" [value]="true" 
+                           (change)="checkBoxEvent($event, 'gmdn', 'Yes')">
+                    <label class="form-check-label" for="gmdnYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gmdnNo" 
+                           formControlName="gmdn" [value]="false" 
+                           (change)="checkBoxEvent($event, 'gmdn', 'No')">
+                    <label class="form-check-label" for="gmdnNo">No</label>
+                  </div>
+                </div>
+                <div *ngIf="showFields.gmdn" class="correction-input">
+                  <input type="text" class="form-control" formControlName="newgmdn" 
+                         placeholder="Enter GMDN code"
+                         [class.is-invalid]="submitted && f['newgmdn'].errors">
+                  <div *ngIf="submitted && f['newgmdn'].errors" class="invalid-feedback">
+                    GMDN is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ECRI Check -->
+          <div class="equipment-check-item mb-4">
+            <div class="row">
+              <div class="col-lg-8">
+                <label class="form-label fw-semibold">
+                  <span *ngIf="job?.equipment?.ecri; else noEcri">
+                    Is Equipment ECRI correct? 
+                    <span class="text-primary">({{ job.equipment.ecri }})</span>
+                  </span>
+                  <ng-template #noEcri>
+                    Equipment has no logged ECRI, please enter this to continue.
+                  </ng-template>
+                </label>
+              </div>
+              <div class="col-lg-4">
+                <div *ngIf="job?.equipment?.ecri" class="radio-group mb-2">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="ecriYes" 
+                           formControlName="ecri" [value]="true" 
+                           (change)="checkBoxEvent($event, 'ecri', 'Yes')">
+                    <label class="form-check-label" for="ecriYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="ecriNo" 
+                           formControlName="ecri" [value]="false" 
+                           (change)="checkBoxEvent($event, 'ecri', 'No')">
+                    <label class="form-check-label" for="ecriNo">No</label>
+                  </div>
+                </div>
+                <div *ngIf="showFields.ecri" class="correction-input">
+                  <input type="text" class="form-control" formControlName="newecri" 
+                         placeholder="Enter ECRI code"
+                         [class.is-invalid]="submitted && f['newecri'].errors">
+                  <div *ngIf="submitted && f['newecri'].errors" class="invalid-feedback">
+                    ECRI is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+</div>

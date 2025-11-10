@@ -1,0 +1,60 @@
+<div class="admin-dashboard" *ngIf="user">
+  <div class="dashboard-header">
+    <h2>Admin Dashboard</h2>
+    <p>Welcome back, {{ user.firstName }}!</p>
+  </div>
+
+  <div class="row">
+    <!-- System Overview -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">System Health</h5>
+          <h3 class="text-success">{{ systemHealth }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Users</h5>
+          <h3>{{ totalUsers }}</h3>
+          <a href="/admin/users" class="btn btn-primary btn-sm">Manage Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Reports</h5>
+          <a href="/admin/reports" class="btn btn-outline-primary btn-sm">View Reports</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Recent System Activities</h5>
+        </div>
+        <div class="card-body">
+          <!-- Activity list here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div *ngIf="!user" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

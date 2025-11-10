@@ -1,0 +1,196 @@
+<div class="row">
+                                <p *ngIf="!equipment.site">
+                                    No Site Details Available
+                                </p>
+                                <table class="table table-responsive"*ngIf="equipment.site">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" class="header-section">
+                                                Site Detail
+                                            </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <table class="table table-responsive" *ngIf="equipment.site">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" *ngIf="equipment.site">Id</th>
+                                            <th scope="col" *ngIf="equipment.site">Site Name</th>
+                                            <th scope="col" *ngIf="equipment.site">Address</th>
+                                            <th scope="col" *ngIf="equipment.site">Site Phone</th>
+                                            <th scope="col" *ngIf="equipment.site">Site Website</th>
+                                            <th scope="col" *ngIf="equipment.site">Site Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td *ngIf="equipment.site.id">{{ equipment.site.id }}</td>
+                                            <td *ngIf="equipment.site.name">{{ equipment.site.name }}</td>
+                                            <td *ngIf="equipment.site">
+                                                <ng-container *ngIf="equipment.site.address1">{{equipment.site.address1}}, </ng-container>
+                                                <ng-container *ngIf="equipment.site.address2">{{equipment.site.address2}}, </ng-container>
+                                                <ng-container *ngIf="equipment.site.townName">{{equipment.site.townName}},</ng-container>
+                                                <ng-container *ngIf="equipment.site.countyName">{{equipment.site.countyName}},</ng-container>
+                                                <ng-container *ngIf="equipment.site.postCode">{{equipment.site.postCode}}</ng-container>
+                                            </td>
+                                            <td *ngIf="equipment.site.phone">{{ equipment.site.phone }}</td>
+                                            <td *ngIf="!equipment.site.phone" class="red">No Data</td>
+
+                                            <td *ngIf="equipment.site.website">{{ equipment.site.website }}</td>
+                                            <td *ngIf="!equipment.site.website" class="red">No Data</td>
+
+                                            <td *ngIf="equipment.site.email">{{ equipment.site.email }}</td>
+                                            <td *ngIf="!equipment.site.email" class="red">No Data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <p *ngIf="!equipment.department">
+                                    No Department Details Available
+                                </p>
+                                <table class="table table-responsive" *ngIf="equipment.department">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" class="header-section">
+                                                Department Detail
+                                            </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <table class="table table-responsive" *ngIf="equipment.department">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" *ngIf="equipment.department">Id</th>
+                                            <th scope="col" *ngIf="equipment.department">Department Name</th>
+                                            <th scope="col" *ngIf="equipment.department.notes">Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td *ngIf="equipment.department.id">{{ equipment.department.id }}</td>
+                                            <td *ngIf="equipment.department.name">{{ equipment.department.name }}</td>
+                                            <td *ngIf="equipment.department.notes">{{ equipment.department.notes }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="table table-responsive" *ngIf="equipment.department">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" class="header-section">
+                                                Contact Detail
+                                            </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <p *ngIf="equipment.department.contacts.length === 0">
+                                    No Contact Details Available
+                                </p>
+                                <table class="table table-responsive" *ngIf="equipment.department">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" *ngIf="equipment.department">Id</th>
+                                            <th scope="col" *ngIf="equipment.department">Firstname</th>
+                                            <th scope="col" *ngIf="equipment.department">Surname</th>
+                                            <th scope="col" *ngIf="equipment.department">Phone</th>
+                                            <th scope="col" *ngIf="equipment.department">Extension</th>
+                                            <th scope="col" *ngIf="equipment.department">Mobile</th>
+                                            <th scope="col" *ngIf="equipment.department">Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngIf="equipment.department.contacts.length !== 0">
+                                        <tr *ngFor="let contacts of equipment.department.contacts">
+                                            <td *ngIf="contacts.id">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.id }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.id }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.id" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.firstName">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.firstName }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.firstName }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.firstName" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.surname">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.surname }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.surname }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.surname" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.phone">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.phone }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.phone }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.phone" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.extension">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.extension }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.extension }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.extension" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.mobile">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.mobile }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.mobile }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.mobile" class="red">No Data</td>
+
+                                            <td *ngIf="contacts.email">
+                                                <ng-container *ngIf="contacts.mainContact">
+                                                    <strong>
+                                                        {{ contacts.email }}
+                                                    </strong>
+                                                </ng-container>
+                                                <ng-container *ngIf="!contacts.mainContact">
+                                                        {{ contacts.email }}
+                                                </ng-container>
+                                            </td>
+                                            <td *ngIf="!contacts.email" class="red">No Data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>

@@ -1,0 +1,190 @@
+<div class="table-container h-100">
+    <div class="table-responsive">
+        <table class="table table-gridjs">
+            <thead class="table-light">
+                <tr>
+                    <!-- Checkbox header column -->
+                    <th class="sort column-header" style="width: 50px;" *ngIf="isShowCheckbox">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    id="selectAll"
+                                    [checked]="isAllSelected()"
+                                    [indeterminate]="isIndeterminate()"
+                                    (change)="toggleSelectAll($event)">
+                            </div>
+                        </div>
+                    </th>
+                    
+                    <!-- Existing columns -->
+                    <th *ngFor="let col of visibleColumns" 
+                        class="sort column-header" 
+                        [attr.data-sort]="col.technicalName"
+                        [style.width]="getColumnWidth(col.technicalName)"
+                        [style.min-width]="getColumnMinWidth(col.technicalName)">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="column-title" 
+                                  [title]="col.prettyName"
+                                  placement="top"
+                                  ngbTooltip="{{ col.prettyName }}">
+                                {{ col.prettyName }}
+                            </span>
+                            
+                            
+                            <!-- Regular search input for non-action columns -->
+                            <input 
+                                type="text" 
+                                class="form-control form-control-sm mt-2" 
+                                placeholder="Search..."
+                                (input)="onSearch($event, col.technicalName)"
+                                [value]="searchFilters[col.technicalName] || ''"
+                                *ngIf="col.technicalName !== 'actions' && withFilter"
+                            >
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loading placeholder -->
+                <tr *ngIf="loading">
+                    <td style="width: 50px;" *ngIf="isShowCheckbox">
+                        <span class="placeholder col-6"></span>
+                    </td>
+                    <td *ngFor="let col of visibleColumns" [style.width]="getColumnWidth(col.technicalName)">
+                        <span class="placeholder col-6"></span>
+                    </td>
+                </tr>
+
+                <!-- Data rows -->
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let item of gridItems" 
+                        [class.table-active]="isItemSelected(item.id)">
+                        <!-- Checkbox column -->
+                        <td style="width: 50px;" *ngIf="isShowCheckbox">
+                            <div class="form-check" style="text-align: center;">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    [id]="'checkbox_' + item.id"
+                                    [checked]="isItemSelected(item.id)"
+                                    (change)="toggleItemSelection(item, $event)">
+                            </div>
+                        </td>
+                        
+                        <!-- Existing columns -->
+                        <td *ngFor="let col of visibleColumns" [style.width]="getColumnWidth(col.technicalName)">
+                            <ng-container *ngIf="col.technicalName !== 'actions'; else actionsTemplate">
+                                <span class="cell-content"
+                                      [ngClass]="getColumnClass(col.technicalName, item[col.technicalName])"
+                                      [title]="item[col.technicalName] | columnFormat:col.technicalName"
+                                      placement="top"
+                                      ngbTooltip="{{ item[col.technicalName] | columnFormat:col.technicalName }}">
+                                    <a style="cursor: pointer;" href="javascript:void(0);" (click)="handleAction('edit', item)">{{ item[col.technicalName] | columnFormat:col.technicalName }}</a>
+
+                                </span>
+                            </ng-container>
+                            
+                            <!-- Individual Actions template -->
+                            <ng-template #actionsTemplate>
+                                <div class="btn-group dropdown-left-force" ngbDropdown>
+                                    <button type="button" 
+                                            class="btn btn-primary btn-sm dropdown-toggle" 
+                                            [disabled]="actionLoading[item.id]"
+                                            ngbDropdownToggle>
+                                        <span *ngIf="actionLoading[item.id]" 
+                                              class="spinner-border spinner-border-sm me-2" 
+                                              role="status" 
+                                              aria-hidden="true">
+                                        </span>
+                                        {{ actionLoading[item.id] ? 'Please wait..' : 'Action' }}
+                                    </button>
+                                    <div class="dropdown-menu dropdownmenu-primary" ngbDropdownMenu>
+                                        <ng-container *ngFor="let action of getActionsForStatus()">
+                                            <a class="dropdown-item" 
+                                               [class.disabled]="actionLoading[item.id]"
+                                               (click)="!actionLoading[item.id] && handleAction(action, item)">
+                                                {{ action }}
+                                            </a>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-container>
+                
+                <!-- No data message -->
+                <tr *ngIf="!loading && gridItems.length === 0">
+                    <td [attr.colspan]="visibleColumns.length + 1" class="text-center py-4">
+                        Search returned no results
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Rest of pagination code -->
+    <div class="row justify-content-md-between align-items-md-center paging">
+        <div class="col col-sm-6" *ngIf="totalItems != 0">
+            <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+                Showing 
+                <select [(ngModel)]="customPageSize" 
+                        (ngModelChange)="onPageSizeChange()"
+                        class="form-select d-inline-block mx-1"
+                        style="width: auto;">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="custom">Custom</option>
+                </select>
+                rows of {{ totalItems }} entries
+                
+                <!-- <span class="ms-2">
+                    <button type="button" 
+                            class="btn btn-sm btn-success" 
+                            (click)="showFilterPopup()">
+                        <i class="ri-add-line align-bottom me-1"></i> Columns
+                    </button>
+                </span>
+                
+                <span style="margin-left: 1em;">
+                    <button type="button" 
+                            class="btn btn-sm btn-success" 
+                            (click)="showColumnArrangementPopup()">
+                        Arrange Columns
+                    </button>
+                </span> -->
+            </div>
+            
+            <div *ngIf="customPageSize === 'custom'">
+                <input type="number" 
+                       [(ngModel)]="pageSize" 
+                       (ngModelChange)="onPageSizeChange()"
+                       class="form-control d-inline-block"
+                       style="width: 100px;"
+                       min="1"
+                       max="1000"
+                       placeholder="Custom">
+            </div>
+        </div>
+        
+        <div class="col col-sm-6">
+            <div class="text-sm-right float-sm-end listjs-pagination" 
+                 [ngStyle]="{ 'display': totalItems === 0 ? 'none' : 'block' }">
+                <ngb-pagination 
+                    class="pagination" 
+                    (pageChange)="onPageChange($event)" 
+                    [collectionSize]="totalItems" 
+                    [(page)]="currentPage" 
+                    [pageSize]="pageSize" 
+                    [maxSize]="5" 
+                    [rotate]="true" 
+                    [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>
+        </div>
+    </div>
+</div>

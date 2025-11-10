@@ -1,0 +1,29 @@
+
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+    <div class="row jobs-row h-100">
+        <div class="col-lg-12 h-100">
+            <div class="card h-100">
+                <div class="card-body h-100">
+                    <app-common-datagrid
+                        [gridItems]="gridItems"
+                        [loading]="loading"
+                        [totalItems]="totalItems"
+                        [currentPage]="currentPage"
+                        [pageSize]="pageSize"
+                        [columnHeader]="columnHeader"
+                        [isEngineer]="false"
+                        (searchData)="onSearch($event)"
+                        (pageChanged)="onPageChanged($event)"
+                        (pageSizeChanged)="onPageSizeChanged($event)"
+                        (bulkActionSelected)="onBulkActionSelected($event)"
+                        (actionSelected)="onActionSelected($event)"
+                        >
+                    </app-common-datagrid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="modal-header bg-primary p-3">
+    <h5 class="modal-description white" id="exampleModalLabel">
+       Add Options
+    </h5>
+    <button type="button" class="btn-close white" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <form [formGroup]="optionForm">
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="textInput" class="form-label">Text <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="textInput" placeholder="Enter Text" formControlName="text" [ngClass]="{ 'is-invalid': submitted && cOptionForm['text'].errors }">
+                    <div *ngIf="submitted && cOptionForm['text'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="cOptionForm['text'].errors['required']">Text is required</div>
+                      </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="failValueInput" class="form-label">Fail Value <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="number" class="form-control" id="failValueInput" placeholder="Enter Fail Value" formControlName="failValue" [ngClass]="{ 'is-invalid': submitted && cOptionForm['failValue'].errors }">
+                    <div *ngIf="submitted && cOptionForm['failValue'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="cOptionForm['failValue'].errors['required']">Fail Value is required</div>
+                      </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="displayOrderInput" class="form-label">Display Order <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="number" class="form-control" id="displayOrderInput" placeholder="Enter Display Order" formControlName="displayOrder" [ngClass]="{ 'is-invalid': submitted && cOptionForm['displayOrder'].errors }">
+                    <div *ngIf="submitted && cOptionForm['displayOrder'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="cOptionForm['displayOrder'].errors['required']">Display Order is required</div>
+                      </div>
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary" (click)="save()">
+                    Add
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

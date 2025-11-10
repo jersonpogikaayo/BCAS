@@ -1,0 +1,251 @@
+// Modal content structure for sticky footer
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; // Set fixed height for percentage calculations
+  max-height: 100vh;
+}
+
+.modal-body {
+  flex: 1;
+  height: 80%; // 80% for body content
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+  height: 10%; // 10% for footer buttons
+  min-height: 60px; // Minimum height for buttons
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .btn {
+    min-width: 120px;
+    height: 38px; // Fixed button height
+  }
+}
+
+// Make the form fill the modal body
+.modal-body .row.h-100 {
+  height: 100% !important;
+  margin: 0;
+}
+
+.modal-body .col-12 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+// Compact the top sections
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  color: #0c5460;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.card {
+  border: 1px solid #e3e6f0;
+  margin-bottom: 0.75rem;
+  
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  .card-title {
+    color: #5a5c69;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+// Compact the name field
+.row.mb-3:first-of-type {
+  margin-bottom: 0.75rem !important;
+  
+  .form-control {
+    height: 35px;
+  }
+}
+
+// Make signature container take most of the remaining space
+.signature-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; // Important for flexbox
+  
+  .signature-placeholder {
+    // background-color: #f8f9fa;
+    flex: 1; // Take all available space
+    min-height: 200px; // Minimum for usability
+    position: relative;
+    
+    &.border-danger {
+      border-color: #dc3545 !important;
+    }
+  }
+  
+  // Compact the signature actions
+  .d-flex.justify-content-between {
+    margin-top: 0.5rem;
+    
+    small {
+      font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}
+
+// Signature field container
+.row.mb-3:last-of-type {
+  flex: 1;
+  display: flex;
+  margin-bottom: 0 !important;
+  
+  .col-lg-2 {
+    flex-shrink: 0;
+  }
+  
+  .col-lg-10 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.user-form-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-right: 15px;
+  
+  .form-label {
+    margin-bottom: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+}
+
+.form-values {
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .modal-content {
+    height: 95vh;
+    max-height: 95vh;
+  }
+  
+  .modal-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .modal-footer {
+    min-height: 70px; // Slightly taller for stacked buttons
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    
+    .btn {
+      width: 100%;
+      height: 35px;
+    }
+  }
+  
+  .user-form-label {
+    justify-content: flex-start;
+    margin-bottom: 5px;
+    padding-right: 0;
+  }
+  
+  .form-values {
+    padding-left: 0;
+  }
+  
+  .signature-placeholder {
+    min-height: 150px;
+  }
+  
+  .row.mb-3 {
+    flex-direction: column;
+    
+    .col-lg-2, .col-lg-10 {
+      flex: none;
+    }
+    
+    &:last-of-type .col-lg-10 {
+      flex: 1;
+    }
+  }
+}
+
+// Ensure proper modal sizing
+:host ::ng-deep .modal-dialog {
+  max-width: 700px;
+  margin: 1.75rem auto;
+  height: calc(100vh - 3.5rem);
+}
+
+:host ::ng-deep .modal-dialog-centered {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+}
+
+// Fix for very tall content
+@media (max-height: 600px) {
+  .modal-content {
+    height: 85vh;
+    max-height: 85vh;
+  }
+  
+  .signature-placeholder {
+    min-height: 120px;
+  }
+  
+  .modal-footer {
+    min-height: 45px;
+  }
+}
+
+// Very small screens
+@media (max-height: 500px) {
+  .modal-content {
+    height: 90vh;
+  }
+  
+  .alert-info, .card {
+    display: none; // Hide info sections to save space
+  }
+  
+  .signature-placeholder {
+    min-height: 100px;
+  }
+}

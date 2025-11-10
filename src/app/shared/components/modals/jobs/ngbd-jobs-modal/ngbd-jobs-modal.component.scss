@@ -1,0 +1,25 @@
+::ng-deep ul.nav {
+    li.disabled {
+        cursor: not-allowed;
+
+        a {
+            pointer-events: none;
+        }
+    }
+}
+
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;  /* Full viewport height */
+}
+
+.modal-body {
+  flex-grow: 1;
+  overflow-y: auto;  /* Enable vertical scrolling if needed */
+}
+
+.modal-footer {
+  margin-top: auto;  /* Push the footer to the bottom */
+}

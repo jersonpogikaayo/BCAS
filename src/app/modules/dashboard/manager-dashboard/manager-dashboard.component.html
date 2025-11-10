@@ -1,0 +1,106 @@
+<!-- manager-dashboard.component.html -->
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4"></div>
+        <div class="row">
+            <div class="col-xxl-6">
+                <div class="card border card-border-primary">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Job Status Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr *ngFor="let status of summaryStatus" (click)="redirectToJobsStatus(status.statusType)" style="cursor: pointer;">
+                                    <th scope="row" *ngIf="status.statusType != 'PendingReview'">
+                                        {{ status.statusType }}
+                                    </th>
+                                    <th scope="row" *ngIf="status.statusType == 'PendingReview'">
+                                        Pending Review
+                                    </th>
+                                    <td>
+                                        {{ status.count }}
+                                    </td>
+                                </tr>
+                                
+                                <!-- Loading placeholders -->
+                                <ng-container *ngIf="summaryStatus.length === 0">
+                                    <tr *ngFor="let item of iterateArray(8)">
+                                        <td>
+                                            <span class="placeholder col-6"></span>
+                                        </td>
+                                        <td>
+                                            <span class="placeholder col-6"></span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                
+                                <!-- Total row -->
+                                <tr style="cursor: pointer;" (click)="redirectToAllJobsStatus()">
+                                    <th>
+                                        Total Active Work Orders:
+                                    </th>
+                                    <td>
+                                        {{ getTotalJobs() }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xxl-6">
+                <div class="card border card-border-primary">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Work Orders by Engineer</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr *ngFor="let engineer of engineerSummary">
+                                    <th scope="row">
+                                        <a
+                                            [routerLink]="['/dashboard/datagrid']" 
+                                            [queryParams]="getJobsUserQueryParams(engineer.userName)">
+                                            {{ engineer.userName }}
+                                        </a>
+                                    </th>
+                                    <td>
+                                        <a 
+                                            [routerLink]="['/dashboard/datagrid']" 
+                                            [queryParams]="getJobsUserQueryParams(engineer.userName)">
+                                            {{ engineer.count }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Loading placeholders -->
+                                <ng-container *ngIf="engineerSummary.length === 0">
+                                    <tr *ngFor="let item of iterateArray(3)">
+                                        <td>
+                                            <span class="placeholder col-6"></span>
+                                        </td>
+                                        <td>
+                                            <span class="placeholder col-6"></span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                
+                                <!-- Total row -->
+                                <tr>
+                                    <th>
+                                        <a>Total:</a>
+                                    </th>
+                                    <td>
+                                        <a>{{ getEngineerTotal() }}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

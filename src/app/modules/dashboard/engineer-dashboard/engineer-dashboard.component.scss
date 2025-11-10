@@ -1,0 +1,76 @@
+.engineer-dashboard {
+  .dashboard-header {
+    h2 {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .avatar-sm {
+    height: 2.5rem;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-xs {
+    height: 1.5rem;
+    width: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .activity-feed {
+    .activity-item {
+      position: relative;
+      padding-bottom: 1rem;
+
+      &:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 20px;
+        bottom: -16px;
+        width: 1px;
+        background-color: #dee2e6;
+      }
+    }
+
+    .activity-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 4px;
+    }
+  }
+
+  .badge-success { background-color: #198754; }
+  .badge-info { background-color: #0dcaf0; }
+  .badge-primary { background-color: #0d6efd; }
+  .badge-warning { background-color: #ffc107; color: #000; }
+  .badge-secondary { background-color: #6c757d; }
+  .badge-light { background-color: #f8f9fa; color: #6c757d; }
+
+  .progress {
+    background-color: #e9ecef;
+  }
+
+  .table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+}

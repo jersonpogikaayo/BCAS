@@ -1,0 +1,213 @@
+[{
+        "prettyName": "Alabama",
+        "techName": "AL"
+    },
+    {
+        "prettyName": "Alaska",
+        "techName": "AK"
+    },
+    {
+        "prettyName": "Arizona",
+        "techName": "AZ"
+    },
+    {
+        "prettyName": "Arkansas",
+        "techName": "AR"
+    },
+    {
+        "prettyName": "California",
+        "techName": "CA"
+    },
+    {
+        "prettyName": "Colorado",
+        "techName": "CO"
+    },
+    {
+        "prettyName": "Connecticut",
+        "techName": "CT"
+    },
+    {
+        "prettyName": "Delaware",
+        "techName": "DE"
+    },
+    {
+        "prettyName": "District Of Columbia",
+        "techName": "DC"
+    },
+    {
+        "prettyName": "Florida",
+        "techName": "FL"
+    },
+    {
+        "prettyName": "Georgia",
+        "techName": "GA"
+    },
+    {
+        "prettyName": "Hawaii",
+        "techName": "HI"
+    },
+    {
+        "prettyName": "Idaho",
+        "techName": "ID"
+    },
+    {
+        "prettyName": "Illinois",
+        "techName": "IL"
+    },
+    {
+        "prettyName": "Indiana",
+        "techName": "IN"
+    },
+    {
+        "prettyName": "Iowa",
+        "techName": "IA"
+    },
+    {
+        "prettyName": "Kansas",
+        "techName": "KS"
+    },
+    {
+        "prettyName": "Kentucky",
+        "techName": "KY"
+    },
+    {
+        "prettyName": "Louisiana",
+        "techName": "LA"
+    },
+    {
+        "prettyName": "Maine",
+        "techName": "ME"
+    },
+    {
+        "prettyName": "Maryland",
+        "techName": "MD"
+    },
+    {
+        "prettyName": "Massachusetts",
+        "techName": "MA"
+    },
+    {
+        "prettyName": "Michigan",
+        "techName": "MI"
+    },
+    {
+        "prettyName": "Minnesota",
+        "techName": "MN"
+    },
+    {
+        "prettyName": "Mississippi",
+        "techName": "MS"
+    },
+    {
+        "prettyName": "Missouri",
+        "techName": "MO"
+    },
+    {
+        "prettyName": "Montana",
+        "techName": "MT"
+    },
+    {
+        "prettyName": "Nebraska",
+        "techName": "NE"
+    },
+    {
+        "prettyName": "Nevada",
+        "techName": "NV"
+    },
+    {
+        "prettyName": "New Hampshire",
+        "techName": "NH"
+    },
+    {
+        "prettyName": "New Jersey",
+        "techName": "NJ"
+    },
+    {
+        "prettyName": "New Mexico",
+        "techName": "NM"
+    },
+    {
+        "prettyName": "New York",
+        "techName": "NY"
+    },
+    {
+        "prettyName": "North Carolina",
+        "techName": "NC"
+    },
+    {
+        "prettyName": "North Dakota",
+        "techName": "ND"
+    },
+    {
+        "prettyName": "Ohio",
+        "techName": "OH"
+    },
+    {
+        "prettyName": "Oklahoma",
+        "techName": "OK"
+    },
+    {
+        "prettyName": "Oregon",
+        "techName": "OR"
+    },
+    {
+        "prettyName": "Pennsylvania",
+        "techName": "PA"
+    },
+    {
+        "prettyName": "Puerto Rico",
+        "techName": "PR"
+    },
+    {
+        "prettyName": "Rhode Island",
+        "techName": "RI"
+    },
+    {
+        "prettyName": "South Carolina",
+        "techName": "SC"
+    },
+    {
+        "prettyName": "South Dakota",
+        "techName": "SD"
+    },
+    {
+        "prettyName": "Tennessee",
+        "techName": "TN"
+    },
+    {
+        "prettyName": "Texas",
+        "techName": "TX"
+    },
+    {
+        "prettyName": "Utah",
+        "techName": "UT"
+    },
+    {
+        "prettyName": "Vermont",
+        "techName": "VT"
+    },
+    {
+        "prettyName": "Virgin Islands",
+        "techName": "VI"
+    },
+    {
+        "prettyName": "Virginia",
+        "techName": "VA"
+    },
+    {
+        "prettyName": "Washington",
+        "techName": "WA"
+    },
+    {
+        "prettyName": "West Virginia",
+        "techName": "WV"
+    },
+    {
+        "prettyName": "Wisconsin",
+        "techName": "WI"
+    },
+    {
+        "prettyName": "Wyoming",
+        "techName": "WY"
+    }
+]

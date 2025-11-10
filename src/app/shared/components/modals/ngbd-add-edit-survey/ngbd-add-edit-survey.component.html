@@ -1,0 +1,294 @@
+<div class="modal-content">
+    <div class="modal-header bg-light p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Create Survey</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="" role="tablist" aria-orientation="vertical">
+                    <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center" (activeIdChange)="activeIdChange($event)">
+                        <li [ngbNavItem]="0">
+                            <a ngbNavLink (click)="activeTab = 0">
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Survey Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="row modal-body content-form">
+                                    <div class="col-xl-12">
+                                        <form [formGroup]="surveyDetailsForm">
+                                            <div class="row mb-3">
+                                                <div class="col-lg-2 user-form-label text-align-right">
+                                                    <label for="name-field" class="form-label">Name: <span class="text-danger">*</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <input type="text" id="name-field" class="form-control" required formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                                                    <div *ngIf="submitted && f['name'].errors" class="invalid-feedback" align="left">
+                                                        <div *ngIf="f['name'].errors['required']">Name is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-lg-2 user-form-label text-align-right">
+                                                    <label for="title-field" class="form-label">Title: <span class="text-danger">*</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <input type="text" id="title-field" class="form-control" required formControlName="title" [ngClass]="{ 'is-invalid': submitted && f['title'].errors }" />
+                                                    <div *ngIf="submitted && f['title'].errors" class="invalid-feedback" align="left">
+                                                        <div *ngIf="f['title'].errors['required']">Title is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-lg-2 user-form-label text-align-right">
+                                                    <label for="description-field" class="form-label">Description: <span class="text-danger">*</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <input type="text" id="description-field" class="form-control" required formControlName="description" [ngClass]="{ 'is-invalid': submitted && f['description'].errors }" />
+                                                    <div *ngIf="submitted && f['description'].errors" class="invalid-feedback" align="left">
+                                                        <div *ngIf="f['description'].errors['required']">Description is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-lg-2 user-form-label text-align-right">
+                                                    <label for="failThreshold-field" class="form-label">Fail Threshold: <span class="text-danger">*</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <input type="number" id="failThreshold-field" class="form-control" required formControlName="failThreshold" [ngClass]="{ 'is-invalid': submitted && f['failThreshold'].errors }" />
+                                                    <div *ngIf="submitted && f['failThreshold'].errors" class="invalid-feedback" align="left">
+                                                        <div *ngIf="f['failThreshold'].errors['required']">Fail Threshold is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-lg-2 user-form-label text-align-right">
+                                                    <label for="active-field" class="form-label">Active: <span class="text-danger">*</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="form-check form-switch form-switch-lg" dir="ltr">
+                                                        <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="active">
+                                                    </div>
+                                                    <div *ngIf="submitted && f['active'].errors" class="invalid-feedback" align="left">
+                                                        <div *ngIf="f['active'].errors['required']">Active required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink (click)="activeTab = 1">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Job Type </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-type [jobTypes]="jobTypes" (selectionChanged)="selectJobType($event)"></app-jobs-type>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink (click)="activeTab = 2">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Survey Restrictions (Optional) </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <div class="row mb-3">
+                                        <div class="col-lg-3">
+                                            <label for="nameInput" class="form-label">Survey Restrictions</label>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" (change)="selectRestriction($event)" [value]="0" [checked]="surveyRestrictions == 0">
+                                                <label class="form-check-label" for="flexRadioDefault1"> None </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" (change)="selectRestriction($event)" [value]="1" [checked]="surveyRestrictions == 1">
+                                                <label class="form-check-label" for="flexRadioDefault2"> Equipment </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" (change)="selectRestriction($event)" [value]="2" [checked]="surveyRestrictions == 2">
+                                                <label class="form-check-label" for="flexRadioDefault3"> Equipment Model </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4" (change)="selectRestriction($event)" [value]="3" [checked]="surveyRestrictions == 3">
+                                                <label class="form-check-label" for="flexRadioDefault4"> Equipment Type </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="surveyRestrictions === 1">
+                                        <app-equipments-data-grid
+                                            [isShowCheckbox]="true"
+                                            [gridItems]="gridItems"
+                                            [loading]="loading"
+                                            [totalItems]="totalItems"
+                                            [currentPage]="currentPage"
+                                            [pageSize]="pageSize"
+                                            [columnHeader]="columnHeader"
+                                            [isEngineer]="false"
+                                            (searchData)="onSearch($event)"
+                                            (pageChanged)="onPageChanged($event)"
+                                            (pageSizeChanged)="onPageSizeChanged($event)"
+                                            (actionSelected)="onActionSelected($event)"
+                                            (selectionChanged)="onEquipmentSelectionChanged($event)"></app-equipments-data-grid>
+                                    </div>
+                                    <div *ngIf="surveyRestrictions === 2">
+                                        <app-equipments-model-data-grid
+                                            [isShowCheckbox]="true"
+                                            [gridItems]="gridItems"
+                                            [loading]="loading"
+                                            [totalItems]="totalItems"
+                                            [currentPage]="currentPage"
+                                            [pageSize]="pageSize"
+                                            [columnHeader]="columnHeader"
+                                            [isEngineer]="false"
+                                            (searchData)="onSearch($event)"
+                                            (pageChanged)="onPageChanged($event)"
+                                            (pageSizeChanged)="onPageSizeChanged($event)"
+                                            (actionSelected)="onActionSelected($event)"
+                                            (selectionChanged)="onEquipmentSelectionChanged($event)"
+                                        ></app-equipments-model-data-grid>
+                                    </div>
+                                    <div *ngIf="surveyRestrictions === 3">
+                                        <app-equipments-type-data-grid
+                                            [isShowCheckbox]="true"
+                                            [gridItems]="gridItems"
+                                            [loading]="loading"
+                                            [totalItems]="totalItems"
+                                            [currentPage]="currentPage"
+                                            [pageSize]="pageSize"
+                                            [columnHeader]="columnHeader"
+                                            [isEngineer]="false"
+                                            (searchData)="onSearch($event)"
+                                            (pageChanged)="onPageChanged($event)"
+                                            (pageSizeChanged)="onPageSizeChanged($event)"
+                                            (actionSelected)="onActionSelected($event)"
+                                            (selectionChanged)="onEquipmentSelectionChanged($event)"
+                                        ></app-equipments-type-data-grid>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="3">
+                            <a ngbNavLink (click)="activeTab = 3">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Sections </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-add-section-survey [sections]="sections" (userSection)="getSection($event)"></app-add-section-survey>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="4">
+                            <a ngbNavLink (click)="activeTab = 4">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Report Template </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-excel-templates-data-grid
+                                        [isShowCheckbox]="true"
+                                        [gridItems]="gridItems"
+                                        [loading]="loading"
+                                        [totalItems]="totalItems"
+                                        [currentPage]="currentPage"
+                                        [pageSize]="pageSize"
+                                        [columnHeader]="columnHeader"
+                                        (searchData)="onSearch($event)"
+                                        (pageChanged)="onPageChanged($event)"
+                                        (pageSizeChanged)="onPageSizeChanged($event)"
+                                        (actionSelected)="onActionSelected($event)"
+                                        (selectionChanged)="onExcelTemplateSelectionChanged($event)"
+                                    ></app-excel-templates-data-grid>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="5">
+                            <a ngbNavLink (click)="activeTab = 5">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Summary </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <div class="row">
+                                        <app-section-header [title]="'Survey Details'"></app-section-header>
+                                        <p><strong>Name:</strong> {{ surveyDetailsForm.get('name')?.value }}</p>
+                                        <p><strong>Title:</strong> {{ surveyDetailsForm.get('title')?.value }}</p>
+                                        <p><strong>Description:</strong> {{ surveyDetailsForm.get('description')?.value }}</p>
+                                        <p><strong>Fail Threshold:</strong> {{ surveyDetailsForm.get('failThreshold')?.value }}</p>
+                                        <p><strong>Active:</strong> {{ surveyDetailsForm.get('active')?.value ? 'Yes' : 'No' }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <app-section-header [title]="'Job Type'"></app-section-header>
+                                        <p><strong>Job Type:</strong> {{ selectedJobType?.name }}</p>
+                                    </div>
+                                    <div class="row" *ngIf="selectedSurveyRestrictions.length > 0">
+                                        <app-section-header [title]="'Survey Restrictions'"></app-section-header>
+                                        <div *ngFor="let restriction of selectedSurveyRestrictions">
+                                            <p>{{ restriction.name ? restriction.name : restriction.assetNumber }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="sections.length > 0">
+                                        <app-section-header [title]="'Survey Sections'"></app-section-header>
+                                        <app-add-section-survey [sections]="sections" (userSection)="getSection($event)"></app-add-section-survey>
+                                    </div>
+                                    <div class="row" *ngIf="selectedExcelTemplates.length > 0">
+                                        <app-section-header [title]="'Report Templates'"></app-section-header>
+                                        <div *ngFor="let template of selectedExcelTemplates">
+                                            <p>{{ template.title }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="tab-content text-muted mt-3 mt-lg-0">
+                    <div [ngbNavOutlet]="CustomVertical"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" *ngIf="activeTab !== 0 && activeTab !== 5" (click)="back()"> Back </button>
+        <button type="button" class="btn btn-primary btn-next" (click)="next()"> {{ activeTab === 5 ? 'Add Survey' : 'Next' }}
+        </button>
+        <!-- <button type="button" class="btn btn-primary" *ngIf="activeTab !== 0 && activeTab !== 6" (click)="back()"> Back </button>
+        <button type="button" class="btn btn-primary btn-next" (click)="next()" *ngIf="activeTab !== 5 && activeTab !== 6"> Next </button>
+        <button type="button" class="btn btn-primary btn-next" (click)="isSurveyFinished(true)" *ngIf="activeTab === 5"> Finish </button>
+        <button type="button" class="btn btn-primary btn-next" (click)="preview(content)" *ngIf="activeTab === 5"> Preview </button>
+        <button type="button" class="btn btn-primary btn-label right ms-auto nexttab btn-next" data-nexttab="v-pills-payment-tab" (click)="surveyNext()" *ngIf="activeTab === 6">
+            <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+            <span class="flex-grow-1 me-2"> Next </span>
+            <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                <span class="visually-hidden">Loading...</span>
+            </span>
+        </button>
+        <button type="button" class="btn btn-primary btn-next" *ngIf="activeTab === 3" (click)="addSection()"> Add Section </button> -->
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<!-- <ng-template #content role="document" let-modal>
+    <div class="modal-content">
+        <div class="modal-header bg-light p-3">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click');"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row modal-body content-form">
+                <app-survey-process [survey]="survey" [isCompleted]="'true'" [isBack]="isBack" [isBackClicked]="surveyBackNotifier" [isNextClicked]="surveyNextNotifier" (hasProceed)="hasProceed($event)" (surveyFinished)="modal.dismiss('Cross click');"></app-survey-process>
+            </div>
+            <div class="modal-footer">
+                <button type="button" style="width: 7em;" class="btn btn-primary text-decoration-none btn-label previestab" data-previous="pills-gen-info-tab" (click)="surveyBack()" *ngIf="surveyActiveTab != 1">
+                    <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back </button>
+                <button type="button" class="btn btn-primary btn-label right ms-auto nexttab btn-next" data-nexttab="v-pills-payment-tab" (click)="surveyNext()">
+                    <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2" *ngIf="!isLoading"></i>
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template> -->

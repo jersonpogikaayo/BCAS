@@ -1,0 +1,96 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body" style="height: 90vh;">
+    <form [formGroup]="contactForm">
+        <!-- First Name -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="firstName" class="form-label">First Name</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="text" id="firstName" class="form-control" formControlName="firstName" placeholder="Enter First Name" />
+            </div>
+        </div>
+        <!-- Surname -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="surname" class="form-label">Surname</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="text" id="surname" class="form-control" formControlName="surname" placeholder="Enter Surname" />
+            </div>
+        </div>
+        <!-- Phone -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="phone" class="form-label">Phone</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="text" id="phone" class="form-control" formControlName="phone" placeholder="Enter Phone" />
+            </div>
+        </div>
+        <!-- Extension -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="extension" class="form-label">Extension</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="text" id="extension" class="form-control" formControlName="extension" placeholder="Enter Extension" />
+            </div>
+        </div>
+        <!-- Mobile -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="mobile" class="form-label">Mobile</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="text" id="mobile" class="form-control" formControlName="mobile" placeholder="Enter Mobile Number" />
+            </div>
+        </div>
+        <!-- Email -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="email" class="form-label">Email</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="email" id="email" class="form-control" formControlName="email" placeholder="Enter Email" />
+            </div>
+        </div>
+        <!-- Main Contact -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="mainContact" class="form-label">Main Contact</label>
+            </div>
+            <div class="col-lg-9">
+                <div class="form-check form-switch form-switch-lg" dir="ltr">
+                    <input type="checkbox" class="form-check-input" id="customSwitchsizelg" checked="" formControlName="mainContact">
+                </div>
+            </div>
+        </div>
+        <!-- Notes -->
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="notes" class="form-label">Notes</label>
+            </div>
+            <div class="col-lg-9">
+                <textarea id="notes" class="form-control" formControlName="notes" placeholder="Enter Notes" rows="3"></textarea>
+            </div>
+        </div>
+        
+        <!-- Department ID -->
+        <!-- <div class="row mb-3">
+            <div class="col-lg-3">
+                <label for="departmentId" class="form-label">Department ID</label>
+            </div>
+            <div class="col-lg-9">
+                <input type="number" id="departmentId" class="form-control" formControlName="departmentId" placeholder="Enter Department ID" />
+            </div>
+        </div> -->
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid" (click)="addContact()">Save Contact</button>
+    </div>
+</div>

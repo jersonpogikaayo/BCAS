@@ -1,0 +1,392 @@
+<!-- Conditional card wrapper -->
+<div class="card h-100" *ngIf="!isRaisedJob">
+    <div class="card-body">
+        <div class="row h-100">
+            <div class="col-lg-2 h-100">
+                <div class="" role="tablist" aria-orientation="vertical">
+                    <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                        <!-- Equipment Selection -->
+                         <li [ngbNavItem]="0">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Equipment </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-equipments-data-grid
+                                        [gridItems]="gridItems"
+                                        [loading]="loading"
+                                        [totalItems]="totalItems"
+                                        [currentPage]="currentPage"
+                                        [pageSize]="pageSize"
+                                        [columnHeader]="columnHeader"
+                                        [isEngineer]="false"
+                                        (searchData)="onSearch($event)"
+                                        (actionSelected)="onActionSelected($event)"
+                                        (selectionChanged)="onSelectionChanged($event)"
+                                        (pageChanged)="onPageChanged($event)"
+                                        (pageSizeChanged)="onPageSizeChanged($event)"
+                                        >
+                                    </app-equipments-data-grid>
+                                </div>
+                            </ng-template>
+                        </li>
+                         
+                        <!-- Job Type -->
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> Job Type </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-type [jobTypes]="jobTypes" (selectionChanged)="selectJobType($event)"></app-jobs-type>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <!-- Job Details -->
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-clipboard-line d-block fs-20 mb-1"></i> Job Details </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-jobs-details [selectedEquipment]="selectedEquipment" #jobDetailsComponent [isCreate]="true" (jobDetails)="onJobDetailsChanged($event)"></app-jobs-details>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <!-- Survey -->
+                        <li [ngbNavItem]="3">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Survey </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <app-survey-selection-data-grid [surveys]="surveys" (equipmentsWithSurvey)="getEquipmentSurvey($event)"></app-survey-selection-data-grid>
+                                </div>
+                            </ng-template>
+                        </li>
+                        <!-- Users -->
+                        <li [ngbNavItem]="4">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-user-2-line d-block fs-20 mb-1"></i> Users </a>
+                            <ng-template ngbNavContent>
+                                <div class="step-content p-4">
+                                    <div class="row modal-body content-form">
+                                    <div class="col-xl-12">
+                                        <div class="table-responsive table-card mt-3 mb-1">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr class="bg-light text-muted">
+                                                        <th scope="col" style="width: 50px;"></th>
+                                                        <th class="sort" data-sort="name">Email</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let data of qualifiedUsers">
+                                                        <th scope="row">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="checkAll" [value]="data" (change)="selectUser($event, data)" [checked]="selectedUser.userId === data.id">
+                                                            </div>
+                                                        </th>
+                                                        <td>{{data.email}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-lg-12 user-form-label text-align-right">
+                                                <label for="name-field" class="form-label">Select a Date and Time to book the Job to:</label>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <input class="form-control flatpickr-input" [(ngModel)]="bookedDate" type="text" mwlFlatpickr [altInput]="false" [enableTime]="true" [convertModelValue]="true" [dateFormat]="'d-m-Y H:i'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                            </ng-template>
+                        </li>
+                        <!-- Summary -->
+                        <li [ngbNavItem]="5">
+                            <a ngbNavLink style="pointer-events: none;">
+                                <i class="ri-mail-line d-block fs-20 mb-1"></i> Summary </a>
+                            <ng-template ngbNavContent>
+                                <div class="col-xl-12">
+                                    <div class="row modal-body content-form">
+                                        <div class="col-xl-12" style="height: 70vh;">
+                                            <h4>Job Details</h4>
+                                            <table class="table align-middle table-nowrap mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th scope="col">Title</th>
+                                                        <th scope="col">Due Date</th>
+                                                        <th scope="col">Job Lifespan</th>
+                                                        <th scope="col">Special Requirements</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{currentJobDetails.Title}}</td>
+                                                        <td>{{currentJobDetails.DueDate}}</td>
+                                                        <td>{{currentJobDetails.jobLifespan}}</td>
+                                                        <td>{{currentJobDetails.SpecialRequirements}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <h4 class="title-summary">Selected Equipment</h4>
+                                            <table class="table align-middle table-nowrap mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th scope="col">Id</th>
+                                                        <th scope="col">Type Name</th>
+                                                        <th scope="col">Manufacturer Name</th>
+                                                        <th scope="col">Model Name</th>
+                                                        <th scope="col">Asset Number</th>
+                                                        <th scope="col">Serial Number</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ng-container *ngIf="isRaisedJob">
+                                                        <tr>
+                                                            <td>{{ equipment[0].id }}</td>
+                                                            <td *ngIf="equipment[0].equipmentType">{{ equipment[0].equipmentType.name }}</td>
+                                                            <td *ngIf="equipment[0].manufacturer">{{ equipment[0].manufacturer.name }}</td>
+                                                            <td *ngIf="equipment[0].model">{{ equipment[0].model.name }}</td>
+                                                            <td>{{ equipment[0].assetNumber }}</td>
+                                                            <td>{{ equipment[0].serialNumber }}</td>
+                                                        </tr>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!isRaisedJob">
+                                                        <tr *ngFor="let item of selectedEquipment">
+                                                           <td>{{ item.id }}</td>
+                                                           <td *ngIf="item.equipmentTypeName">{{ item.equipmentTypeName }}</td>
+                                                           <td *ngIf="item.manufacturerName">{{ item.manufacturerName }}</td>
+                                                           <td *ngIf="item.modelName">{{ item.modelName }}</td>
+                                                           <td>{{ item.assetNumber }}</td>
+                                                           <td>{{ item.serialNumber }}</td>
+                                                       </tr>
+                                                    </ng-container>
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <h4 class="title-summary">Selected Survey/s</h4>
+                                            <table class="table align-middle table-nowrap mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Title</th>
+                                                        <th scope="col">Job Type Name</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let survey of selectedEquipmentSurvey">
+                                                        <td>{{ survey.name }}</td>
+                                                        <td>{{ survey.title }}</td>
+                                                        <td>{{ survey.jobTypeName }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <br>
+                                            <h4 class="title-summary">Selected User</h4>
+                                            <table class="table align-middle table-nowrap mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th scope="col">Email</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{ selectedUser.email }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10 h-100">
+                <div class="tab-content text-muted mt-3 mt-lg-0 h-100" [ngbNavOutlet]="CustomVertical">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer" style="border-top: none;">
+        <div class="row">
+            <div class="col-lg-3">
+                <button type="button" class="btn btn-primary btn-next" (click)="back()" *ngIf="activeTab != 0"> Back </button>
+            </div>
+            <div class="col-lg-9" style="text-align: right;">
+                <button type="button" class="btn btn-primary btn-next" (click)="next()" [disabled]="selectedEquipment.length == 0" *ngIf="activeTab == 0">
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary btn-next" (click)="next()" [disabled]="!selectedJobType"  *ngIf="activeTab == 1">
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary btn-next" (click)="next()" [disabled]="!isJobDetailsFormValid()" *ngIf="activeTab == 2">
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary btn-next" (click)="next()" [disabled]="selectedEquipmentSurvey.length === 0" *ngIf="activeTab == 3">
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary btn-next" (click)="next()" *ngIf="activeTab == 4">
+                    <span class="flex-grow-1 me-2"> Next </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary" (click)="createJob()"  *ngIf="activeTab == 5">
+                    <span class="flex-grow-1 me-2"> Submit </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content without card wrapper when isRaisedJob is true -->
+<div class="row h-100" *ngIf="isRaisedJob">
+    <div class="col-lg-2 h-100" style="position: fixed;">
+        <div class="" role="tablist" aria-orientation="vertical">
+            <ul ngbNav #CustomVertical="ngbNav" [activeId]="activeTab" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                <!-- Job Type -->
+                <li [ngbNavItem]="0">
+                    <a ngbNavLink style="pointer-events: none;">
+                        <i class="ri-home-4-line d-block fs-20 mb-1"></i> Job Type </a>
+                    <ng-template ngbNavContent>
+                        <div class="step-content p-4">
+                            <app-jobs-type [jobTypes]="jobTypes" (selectionChanged)="selectJobType($event)"></app-jobs-type>
+                        </div>
+                    </ng-template>
+                </li>
+                <!-- Job Details -->
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink style="pointer-events: none;">
+                        <i class="ri-clipboard-line d-block fs-20 mb-1"></i> Job Details </a>
+                    <ng-template ngbNavContent>
+                        <div class="step-content p-4">
+                            <app-jobs-details #jobDetailsComponent [isCreate]="true" (jobDetails)="onJobDetailsChanged($event)"></app-jobs-details>
+                        </div>
+                    </ng-template>
+                </li>
+                <!-- Survey -->
+                <li [ngbNavItem]="2">
+                    <a ngbNavLink style="pointer-events: none;">
+                        <i class="ri-user-2-line d-block fs-20 mb-1"></i> Survey </a>
+                    <ng-template ngbNavContent>
+                        <div class="step-content p-4">
+                            <app-survey-selection-data-grid [surveys]="surveys" (equipmentsWithSurvey)="getEquipmentSurvey($event)"></app-survey-selection-data-grid>
+                        </div>
+                    </ng-template>
+                </li>
+                <!-- Summary -->
+                <li [ngbNavItem]="3">
+                    <a ngbNavLink style="pointer-events: none;">
+                        <i class="ri-mail-line d-block fs-20 mb-1"></i> Summary </a>
+                    <ng-template ngbNavContent>
+                        <div class="col-xl-12">
+                            <div class="row modal-body content-form">
+                                <div class="col-xl-12">
+                                    <h4>Job Details</h4>
+                                    <table class="table align-middle table-nowrap mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Due Date</th>
+                                                <th scope="col">Job Lifespan</th>
+                                                <th scope="col">Special Requirements</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{currentJobDetails.Title}}</td>
+                                                <td>{{currentJobDetails.DueDate}}</td>
+                                                <td>{{currentJobDetails.jobLifespan}}</td>
+                                                <td>{{currentJobDetails.SpecialRequirements}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <h4 class="title-summary">Selected Equipment</h4>
+                                    <table class="table align-middle table-nowrap mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Type Name</th>
+                                                <th scope="col">Manufacturer Name</th>
+                                                <th scope="col">Model Name</th>
+                                                <th scope="col">Asset Number</th>
+                                                <th scope="col">Serial Number</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngIf="isRaisedJob">
+                                                <td>{{ equipment[0].id }}</td>
+                                                <td *ngIf="equipment[0].equipmentType">{{ equipment[0].equipmentType.name }}</td>
+                                                <td *ngIf="equipment[0].manufacturer">{{ equipment[0].manufacturer.name }}</td>
+                                                <td *ngIf="equipment[0].model">{{ equipment[0].model.name }}</td>
+                                                <td>{{ equipment[0].assetNumber }}</td>
+                                                <td>{{ equipment[0].serialNumber }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <h4 class="title-summary">Selected Survey/s</h4>
+                                    <table class="table align-middle table-nowrap mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Job Type Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let survey of selectedEquipmentSurvey">
+                                                <td>{{ survey.name }}</td>
+                                                <td>{{ survey.title }}</td>
+                                                <td>{{ survey.jobTypeName }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <h4 class="title-summary">Selected User</h4>
+                                    <table class="table align-middle table-nowrap mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col">Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ selectedUser.email }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-2 h-100"></div>
+    <div class="col-lg-10 h-100">
+        <div class="tab-content text-muted mt-3 mt-lg-0 h-100">
+            <div [ngbNavOutlet]="CustomVertical" class="h-100"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="modal-header bg-light p-3">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="close()"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <form [formGroup]="testEquipmentForm">
+            <div class="row mb-3">
+                <div class="col-lg-2 user-form-label text-align-right">
+                    <label for="name-field" class="form-label">Due Date: <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-8">
+                <input type="date" id="name-field" class="form-control" required required formControlName="serviceDate" [ngClass]="{ 'is-invalid': submitted && testEquipmentF['serviceDate'].errors }"/>
+                <div *ngIf="submitted && testEquipmentF['serviceDate'].errors" class="invalid-feedback" align="left">
+                    <div *ngIf="testEquipmentF['serviceDate'].errors['required']">Due Date is required</div>
+                </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2 text-align-right">
+                    <label class="form-label">Job Lifespan: <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-8">
+                    <ng-select class="custom form-control" [items]="jobFrequency" bindLabel="name" bindValue="days" *ngIf="jobFrequency.length != 0" formControlName="lifespan" [ngClass]="{ 'is-invalid': submitted && testEquipmentF['lifespan'].errors }">
+                    </ng-select>
+                    <div *ngIf="submitted && testEquipmentF['lifespan'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="testEquipmentF['lifespan'].errors['required']">Lifespan is required</div>
+                        </div>
+                </div>
+            </div> 
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+     <div class="text-end">
+        <button type="submit" class="btn btn-primary" (click)="save()" [disabled]="testEquipmentForm.invalid">Update</button>
+    </div>
+</div>

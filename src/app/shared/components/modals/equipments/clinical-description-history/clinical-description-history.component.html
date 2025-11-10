@@ -1,0 +1,36 @@
+<table class="table table-responsive">
+    <thead class="table-light">
+        <tr>
+            <th scope="col" class="header-section">
+                Clinical Description History Detail
+            </th>
+        </tr>
+    </thead>
+</table>
+<table class="table align-middle table-nowrap mb-0" *ngIf="equipment.clinicalDescriptionHistory.length != 0">
+    <thead class="table-light">
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Equipment Id</th>
+            <th scope="col">New ECRI</th>
+            <th scope="col">Old ECRI</th>
+            <th scope="col">New GMDN</th>
+            <th scope="col">Old GMDN</th>
+            <th scope="col">Modified By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let detail of equipment.clinicalDescriptionHistory">
+            <td>{{detail.dateCreated | date: 'yyyy-MM-dd'}}</td>
+            <td>{{detail.equipmentId}}</td>
+            <td>{{detail.newECRI}}</td>
+            <td class="red">{{detail.oldECRI}}</td>
+            <td>{{detail.newGMDN}}</td>
+            <td class="red">{{detail.oldGMDN}}</td>
+            <td>{{detail.lastModifiedUser}}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="text-center" *ngIf="equipment.clinicalDescriptionHistory.length == 0">
+    No clinical description history for this equipment yet.
+</div>

@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <app-my-users-test-equipments-data-grid
+                    [gridItems]="gridItems"
+                    [loading]="loading"
+                    [totalItems]="totalItems"
+                    [currentPage]="currentPage"
+                    [pageSize]="pageSize"
+                    [columnHeader]="columnHeader"
+                    [isEngineer]="false"
+                    (searchData)="onSearch($event)"
+                    (pageChanged)="onPageChanged($event)"
+                    (pageSizeChanged)="onPageSizeChanged($event)"
+                    (actionSelected)="handleAction($event.action, $event.item)"
+                ></app-my-users-test-equipments-data-grid>
+                <!-- <app-equipments-data-grid
+                    [isShowCheckbox]="false"
+                    [gridItems]="gridItems"
+                    [loading]="loading"
+                    [totalItems]="totalItems"
+                    [currentPage]="currentPage"
+                    [pageSize]="pageSize"
+                    [columnHeader]="columnHeader"
+                    [isEngineer]="false"
+                    (searchData)="onSearch($event)"
+                    (pageChanged)="onPageChanged($event)"
+                    (pageSizeChanged)="onPageSizeChanged($event)"
+                    (actionSelected)="handleAction($event.action, $event.item)"
+                    >
+                </app-equipments-data-grid> -->
+            </div>  
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+<app-common-datagrid
+    [gridItems]="gridItems"
+    [loading]="loading"
+    [totalItems]="totalItems"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [columnHeader]="columnHeader"
+    [isEngineer]="false"
+    (searchData)="onSearch($event)"
+    (bulkActionSelected)="onBulkActionSelected($event)"
+    (actionSelected)="onActionSelected($event)"
+    (pageChanged)="onPageChanged($event)"
+    (pageSizeChanged)="onPageSizeChanged($event)"
+    (filterPopupRequested)="onFilterPopupRequested()"
+    (columnArrangementRequested)="showColumnArrangementPopup()"
+    >
+</app-common-datagrid>

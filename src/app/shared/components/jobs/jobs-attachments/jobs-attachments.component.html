@@ -1,0 +1,121 @@
+<app-section-header [title]="'Job Attachments'"></app-section-header>
+
+<!-- Add Attachment Dropzone -->
+<div class="card mb-4" *ngIf="isAddingAttachment">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">Add New Attachment</h6>
+        <button type="button" class="btn-close" (click)="cancelAddAttachment()"></button>
+    </div>
+    <div class="card-body">
+        <ngx-dropzone 
+            (change)="onSelect($event)" 
+            [accept]="accept"
+            [multiple]="true"
+            class="mb-3">
+            <ngx-dropzone-label>
+                <i class="ri-upload-cloud-line display-4 text-muted mb-2"></i>
+                <br>
+                Drag and Drop your files here or click to browse...
+            </ngx-dropzone-label>
+            <ngx-dropzone-preview 
+                *ngFor="let f of files" 
+                [removable]="true" 
+                (removed)="onRemove(f)">
+                <ngx-dropzone-label>
+                    <i class="ri-file-line me-2"></i>
+                    {{ f.name }} ({{ (f.size / 1024 / 1024).toFixed(2) }} MB)
+                </ngx-dropzone-label>
+            </ngx-dropzone-preview>
+        </ngx-dropzone>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="cancelAddAttachment()">
+                <i class="ri-close-line me-1"></i>
+                Cancel
+            </button>
+            <button 
+                type="button" 
+                class="btn btn-primary"
+                [disabled]="files.length === 0 || isUploading"
+                (click)="submitAttachments()">
+                <i class="ri-upload-line me-1" *ngIf="!isUploading"></i>
+                {{ isUploading ? 'Uploading...' : 'Upload Files' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div class="text-center py-5" *ngIf="isLoadingAttachments">
+    <h6 class="text-muted">Loading Attachments...</h6>
+    <p class="text-muted small">Please wait while we fetch your attachments.</p>
+</div>
+
+<!-- Existing Attachments Table -->
+<div class="table-responsive" *ngIf="!isLoadingAttachments && jobAttachments && jobAttachments.length > 0; else noAttachmentsTemplate">
+    <table class="table align-middle table-nowrap mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">File Name</th>
+                <th scope="col" style="width: 100px;">Size</th>
+                <th scope="col" style="width: 120px;">Type</th>
+                <th scope="col" style="width: 100px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let attachment of jobAttachments">
+                <td [class.text-danger]="!attachment.name">
+                    <i class="ri-file-line me-2"></i>
+                    {{ attachment.name || 'Unknown File' }}
+                </td>
+                <td class="text-muted">
+                    {{ attachment.fileSize ? (attachment.fileSize / 1024 / 1024).toFixed(2) + ' MB' : 'N/A' }}
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark">{{ attachment.type || 'Unknown' }}</span>
+                </td>
+                <td>
+                    <button 
+                        type="button" 
+                        class="btn btn-primary"
+                        (click)="downloadAttachment(attachment)">
+                        <i class="ri-download-line me-2"></i>
+                        {{ isAttachmentLoading(attachment) ? 'Downloading...' : 'Download' }}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="text-center py-5" *ngIf="!isLoadingAttachments">
+        <i class="ri-attachment-line display-4 text-muted mb-3"></i>
+        <h6 class="text-muted">Found {{jobAttachments.length}} attachments</h6>
+        <p class="text-muted small">Click the button below to add more.</p>
+        <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="addAttachmentTrigger()">
+            <i class="ri-add-line me-2"></i>
+            Add Attachment
+        </button>
+    </div>
+</div>
+
+<!-- No Attachments Template -->
+<ng-template #noAttachmentsTemplate>
+    <div class="text-center py-5" *ngIf="!isLoadingAttachments">
+        <i class="ri-attachment-line display-4 text-muted mb-3"></i>
+        <h6 class="text-muted" *ngIf="jobAttachments.length == 0">No Job Attachments Found</h6>
+        <p class="text-muted small" *ngIf="jobAttachments.length == 0">No attachments have been added to this job yet.</p>
+        <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="addAttachmentTrigger()">
+            <i class="ri-add-line me-2"></i>
+            Add Attachment
+        </button>
+    </div>
+</ng-template>

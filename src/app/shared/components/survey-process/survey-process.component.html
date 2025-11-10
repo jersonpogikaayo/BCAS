@@ -1,0 +1,783 @@
+<div class="row modal-body content-form">
+    <div class="col-xl-12">
+        <aw-wizard #surveyWizard [navBarLayout]="'large-empty-symbols'" class="nav nav-pills progress-bar-tab custom-nav">
+            <aw-wizard-step *ngFor="let section of survey.sections; let i = index" [stepTitle]="section.title">
+                <ng-template awWizardStepSymbol>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill" [class.active]="i === currentStepIndex" data-progressbar="custom-progress-bar" type="button" role="tab">
+                            {{ i + 1 }}
+                        </button>
+                    </li>
+                </ng-template>
+                <div>
+                    <div class="mb-4">
+                        <app-section-header [title]="section.title"></app-section-header>
+                        <div>
+                            <div *ngIf="section.description" [sanitizeHtml]="section.description"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="i === currentStepIndex">
+                    <form [formGroup]="surveyForm" *ngIf="surveyForm">
+                        <div *ngFor="let question of section.questions; let qIndex = index" class="question-container mb-4">
+                            <div *ngIf="!question.questionDisplayOption" class="row">
+                                <!-- Date Question (questionTypeId == 1) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 1">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <input type="date" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [disabled]="isReadOnly()" (change)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="question.questionValidation && !isQuestionInvalid(question)"> Please select a valid date within the allowed range. </small>
+                                    </div>
+                                </div>
+                                <!-- Text Question (questionTypeId == 2) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 2">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <input type="text" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [disabled]="isReadOnly()" [placeholder]="question.questionValidation?.maskRegex ? 'Format: ' + (question.questionValidation?.maskErrorMessage || '') : ''" (blur)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Decimal Question (questionTypeId == 3) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 3">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <input type="number" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [min]="question.questionValidation?.minValue ?? null" [max]="question.questionValidation?.maxValue ?? null" [step]="question.questionValidation?.step || 'any'" [placeholder]="'Enter Value'" [disabled]="isReadOnly()" (blur)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Radio Question (questionTypeId == 4) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 4">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <div class="form-check form-check-inline mb-2" *ngFor="let option of question.options; let optIndex = index">
+                                            <input class="form-check-input" type="radio" [id]="'question_' + question.id + '_option_' + option.id" [name]="'question_' + question.id" [value]="option.id" [checked]="isRadioOptionSelected(question.id, option.id)" [disabled]="isReadOnly()" [attr.data-question-id]="question.id" [attr.data-option-id]="option.id" (change)="onRadioOptionChanged(question, option)">
+                                            <label class="form-check-label" [for]="'question_' + question.id + '_option_' + option.id">
+                                                {{ option.text }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Checkbox Question (questionTypeId == 5) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 5">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <div class="form-check mb-2" *ngFor="let option of question.options; let optIndex = index">
+                                            <input class="form-check-input" type="checkbox" [id]="'question_' + question.id + '_option_' + option.id" (change)="onQuestionAnswered(question, option)" [value]="option.id" [disabled]="isReadOnly()">
+                                            <label class="form-check-label" [for]="'question_' + question.id + '_option_' + option.id">
+                                                {{ option.text }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Range Question (questionTypeId == 6) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 6">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <div class="range-input-container">
+                                            <input type="range" class="form-range" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [disabled]="isReadOnly()" [min]="question.questionValidation?.minValue || 0" [max]="question.questionValidation?.maxValue || 100" [step]="question.questionValidation?.step || 1" (input)="onRangeValueChanged(question, $event)" />
+                                            <div class="range-value-display">
+                                                <span class="badge bg-primary">{{ getQuestionControl(question.id)?.value || question.questionValidation?.minValue || 0 }}</span>
+                                            </div>
+                                            <div class="range-labels d-flex justify-content-between">
+                                                <small class="text-muted">{{ question.questionValidation?.minValue || 0 }}</small>
+                                                <small class="text-muted">{{ question.questionValidation?.maxValue || 100 }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="question.questionValidation && !isQuestionInvalid(question)">
+                                            {{ getRangeValidationHint(question) }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <!-- Image Upload Question (questionTypeId == 7) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 7">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <input type="file" [id]="'fileInput_' + question.id" [disabled]="isReadOnly()" class="d-none" accept="image/*" multiple [class.is-invalid]="isQuestionInvalid(question)" (change)="onImagesSelected(question, $event)" #imageFileInput style="visibility: hidden;"/>
+                                        <div class="mb-2">
+                                            <small class="text-muted">
+                                                <i class="ri-information-line me-1"></i> Maximum file size: 100MB per image. Supported formats: JPG, PNG, GIF </small>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <div class="image-preview-container mt-3" *ngIf="getSelectedImages(question.id).length > 0">
+                                            <div class="row g-2">
+                                                <div class="col-6 col-md-4 col-lg-3" *ngFor="let image of getSelectedImages(question.id); let i = index">
+                                                    <div class="image-card">
+                                                        <div class="image-header d-flex justify-content-between align-items-center mb-2">
+                                                            <h6 class="mb-0">
+                                                                <i [class]="image.source === 'camera' ? 'ri-camera-line text-success' : 'ri-gallery-line text-primary'" class="me-1"></i> Image {{ i + 1 }}
+                                                            </h6>
+                                                            <span class="badge" [class]="image.source === 'camera' ? 'bg-success' : 'bg-primary'">
+                                                                {{ image.source === 'camera' ? 'Camera' : 'Gallery' }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="image-preview-container position-relative">
+                                                            <div class="image-wrapper position-relative" (click)="openImagePreview(image, question.id)" style="cursor: pointer;">
+                                                                <img [src]="surveyProcessService.sanitizeImageUrl(image.preview)" [alt]="image.name" class="img-thumbnail image-hover-effect" style="width: 100%; height: 150px; object-fit: cover;">
+                                                                <div class="image-overlay d-flex align-items-center justify-content-center">
+                                                                    <i class="ri-eye-line text-white fs-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="image-info mt-1">
+                                                                <small class="text-muted d-block text-truncate" [title]="image.name">
+                                                                    {{ image.name }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    {{ surveyProcessService.formatFileSize(image.size) }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    <i class="ri-time-line me-1"></i>
+                                                                    {{ formatUploadDate(image.uploadedAt) }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    <i [class]="image.source === 'camera' ? 'ri-camera-line text-success' : 'ri-gallery-line text-primary'" class="me-1"></i>
+                                                                    {{ image.source === 'camera' ? 'Captured' : 'Uploaded' }}
+                                                                </small>
+                                                                <button type="button" class="btn btn-sm btn-danger mt-2 w-100" [disabled]="isReadOnly()" (click)="removeImage(question.id, i); $event.stopPropagation()">
+                                                                    <i class="ri-delete-bin-line me-1"></i> Remove </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="upload-summary mt-3 p-3 bg-light rounded">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <i class="ri-image-line me-2 text-primary"></i>
+                                                            <strong>{{ getSelectedImages(question.id).length }}</strong>
+                                                            <span class="ms-1">image(s) selected</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center" *ngIf="getTotalFileSize(question.id) > 0">
+                                                            <i class="ri-file-3-line me-2 text-info"></i>
+                                                            <span>Total size: <strong>{{ surveyProcessService.formatFileSize(getTotalFileSize(question.id)) }}</strong>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="image-sources text-end">
+                                                            <div class="d-flex justify-content-end align-items-center mb-1" *ngIf="getCameraImageCount(question.id) > 0">
+                                                                <i class="ri-camera-line text-success me-1"></i>
+                                                                <small class="text-muted">
+                                                                    {{ getCameraImageCount(question.id) }} from camera </small>
+                                                            </div>
+                                                            <div class="d-flex justify-content-end align-items-center" *ngIf="getGalleryImageCount(question.id) > 0">
+                                                                <i class="ri-gallery-line text-primary me-1"></i>
+                                                                <small class="text-muted">
+                                                                    {{ getGalleryImageCount(question.id) }} from gallery </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="quick-actions mt-2 pt-2 border-top">
+                                                    <div class="row g-2">
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="imageFileInput.click()">
+                                                                <i class="ri-add-line me-1"></i> Add More </button>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn btn-sm btn-outline-success w-100" [disabled]="isReadOnly()" (click)="openCamera(question.id)">
+                                                                <i class="ri-camera-line me-1"></i> Take Another </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="upload-instructions text-center p-4 border border-dashed rounded" *ngIf="getSelectedImages(question.id).length === 0">
+                                            <div class="upload-icons mb-3">
+                                                <i class="ri-camera-line fs-1 text-success me-3"></i>
+                                                <i class="ri-gallery-line fs-1 text-primary"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-2">No images selected</h6>
+                                            <p class="text-muted mb-3">Choose how you'd like to add images:</p>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="imageFileInput.click()">
+                                                        <i class="ri-gallery-line me-1"></i> Gallery </button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-outline-success w-100" [disabled]="isReadOnly()" (click)="openCamera(question.id)">
+                                                        <i class="ri-camera-line me-1"></i> Camera </button>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted mt-2 d-block"> You can use both methods to add multiple images </small>
+                                        </div>
+                                        <div class="camera-status mt-2" *ngIf="!isReadOnly()">
+                                            <small class="text-muted d-flex align-items-center">
+                                                <i class="ri-smartphone-line me-1"></i>
+                                                <span>Camera available on mobile devices and tablets</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- File Upload Question (questionTypeId == 8) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 8">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <input type="file" [disabled]="isReadOnly()" class="form-control mb-3" [id]="'file_input_' + question.id" accept=".pdf,.doc,.docx,.txt,.csv" multiple (change)="onDocumentFilesSelected(question, $event)">
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <div class="selected-files" *ngIf="hasSelectedFiles(question.id)">
+                                            <h6>Selected Documents ({{ getSelectedFilesCount(question.id) }})</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-2" *ngFor="let file of getSelectedFiles(question.id); let i = index">
+                                                    <div class="file-preview-container border rounded p-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="file-icon me-3">
+                                                                <i [class]="getFileIcon(file.name)" style="font-size: 2rem;"></i>
+                                                            </div>
+                                                            <div class="file-info flex-grow-1">
+                                                                <div class="file-name fw-bold text-truncate" [title]="file.name">
+                                                                    {{ file.name }}
+                                                                </div>
+                                                                <small class="text-muted d-block">{{ getFileType(file.name) }}</small>
+                                                                <small class="text-muted d-block">{{ surveyProcessService.formatFileSize(file.size) }}</small>
+                                                                <small class="text-muted d-block">{{ formatUploadDate(file.uploadedAt) }}</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="file-actions mt-2 d-flex gap-2">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" (click)="downloadFile(file)" title="Download file">
+                                                                <i class="ri-download-line me-1"></i> Download </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile(question.id, i)" title="Remove file">
+                                                                <i class="ri-delete-bin-line me-1"></i> Remove </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-muted"> Total size: {{ surveyProcessService.formatFileSize(getTotalDocumentFileSize(question.id)) }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="getSelectedFiles(question.id).length === 0">
+                                            <i class="ri-upload-cloud-line me-1"></i> Click to select CSV or Word documents. You can select multiple files at once. </small>
+                                        <small class="form-text text-info mt-1"> Supported formats: CSV, DOC, DOCX, TXT </small>
+                                    </div>
+                                </div>
+                                <!-- Signature Question (questionTypeId == 9) -->
+                                <!-- <div class="row mb-3" *ngIf="question.questionTypeId == 9"><div class="col-lg-4 user-form-label" *ngIf="!question.questionDisplayOption"><label class="form-label" 
+                                        [class.text-danger]="isQuestionInvalid(question)"
+                                        [sanitizeHtml]="question.description"></label><span class="text-danger" *ngIf="!question.isOptional">*</span></div><div class="col-lg-12 user-form-label" *ngIf="question.questionDisplayOption"><label class="form-label" 
+                                        [class.text-danger]="isQuestionInvalid(question)"
+                                        [sanitizeHtml]="question.description"></label><span class="text-danger" *ngIf="!question.isOptional">*</span></div><div [class]="question.questionDisplayOption ? 'col-lg-12' : 'col-lg-8'" class="form-values"><app-signature-pad 
+                                        #signaturePad
+                                        [defaultValue]="getSignatureValue(question.id)"
+                                        [isDisabled]="isReadOnly()"
+                                        (imageUrl)="onSignatureCaptured(question, $event)"
+                                        (signatureChanged)="onSignatureStatusChanged(question, $event)"
+                                        (cleared)="onSignatureCleared(question)"
+                                        (beginSign)="onSignatureBegin(question)"
+                                        (endSign)="onSignatureEnd(question)"></app-signature-pad><div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                        {{ getValidationErrorMessage(question) }}
+                                    </div><small class="form-text text-muted mt-2" *ngIf="!isQuestionInvalid(question)"></small></div></div> -->
+                                <!-- Signature and Sketch Question (questionTypeId == 10) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 10 || question.questionTypeId == 9">
+                                    <div class="col-lg-12 user-form-label" *ngIf="!question.questionDisplayOption">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 user-form-label" *ngIf="question.questionDisplayOption">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="sketch-container">
+                                            <div class="sketch-preview" *ngIf="getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-preview-wrapper position-relative">
+                                                    <img [src]="getSketchValue(question.id)" [alt]="question.questionTypeId == 9 ? 'Signature preview' : 'Sketch preview'" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
+                                                    <div class="sketch-overlay d-flex align-items-center justify-content-center">
+                                                        <div class="text-white text-center">
+                                                            <i class="ri-edit-line fs-2 mb-2 d-block"></i>
+                                                            <small>Click to edit {{ question.questionTypeId == 9 ? 'signature' : 'sketch' }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="sketch-info mt-2">
+                                                    <small class="text-muted d-flex align-items-center">
+                                                        <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-palette-line me-1'"></i>
+                                                        {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }} created • Click to edit </small>
+                                                </div>
+                                            </div>
+                                            <div class="sketch-empty-state text-center p-4 border border-dashed rounded" *ngIf="!getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-icons mb-3">
+                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line fs-1 text-primary' : 'ri-palette-line fs-1 text-primary'"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-2">{{ question.questionTypeId == 9 ? 'Add your signature' : 'Create a sketch' }}</h6>
+                                                <p class="text-muted mb-3">Click to open fullscreen {{ question.questionTypeId == 9 ? 'signature' : 'drawing' }} canvas</p>
+                                                <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
+                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-pencil-line me-1'"></i>
+                                                    {{ question.questionTypeId == 9 ? 'Sign Here' : 'Start Drawing' }}
+                                                </button>
+                                                <small class="text-muted mt-2 d-block">
+                                                    {{ question.questionTypeId == 9 ? 'Use touch, mouse, or stylus to sign' : 'Use touch, mouse, or stylus to create your sketch' }}
+                                                </small>
+                                            </div>
+                                            <div class="sketch-actions mt-3" *ngIf="getSketchValue(question.id)">
+                                                <div class="row g-2">
+                                                    <div class="col-6">
+                                                        <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId)">
+                                                            <i class="ri-edit-line me-1"></i> Edit {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <button type="button" class="btn btn-outline-danger w-100" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
+                                                            <i class="ri-delete-bin-line me-1"></i> Clear {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted mt-2" *ngIf="!isQuestionInvalid(question)">
+                                            <i class="ri-information-line me-1"></i>
+                                            {{ question.questionTypeId == 9 ? 'Sign using the fullscreen canvas' : 'Draw sketches, diagrams, or annotations using the fullscreen canvas' }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <!-- Rating Question (questionTypeId == 12) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 12">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-8 form-values">
+                                        <div dir="ltr">
+                                            <ngb-rating class="stars" [max]="5" [rate]="getQuestionControl(question.id)?.value || 0" (rateChange)="onRatingChanged(question, $event)" [readonly]="isReadOnly()"></ngb-rating>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="!isQuestionInvalid(question)"> Rate from 1 to 5 stars </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="question.questionDisplayOption" class="row">
+                                <!-- Date Question (questionTypeId == 1) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 1">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <input type="date" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [disabled]="isReadOnly()" (change)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="question.questionValidation && !isQuestionInvalid(question)"> Please select a valid date within the allowed range. </small>
+                                    </div>
+                                </div>
+                                <!-- Text Question (questionTypeId == 2) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 2">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <input type="text" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [disabled]="isReadOnly()" [readonly]="isReadOnly()" [placeholder]="question.questionValidation?.maskRegex ? 'Format: ' + (question.questionValidation?.maskErrorMessage || '') : ''" (blur)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Decimal Question (questionTypeId == 3) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 3">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <input type="number" class="form-control" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [min]="question.questionValidation?.minValue ?? null" [max]="question.questionValidation?.maxValue ?? null" [step]="question.questionValidation?.step || 'any'" [placeholder]="'Enter Value'" [disabled]="isReadOnly()" [readonly]="isReadOnly()" (blur)="onQuestionAnswered(question, getQuestionControl(question.id)?.value)" />
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Radio Question (questionTypeId == 4) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 4">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="form-check form-check-inline mb-2" *ngFor="let option of question.options; let optIndex = index">
+                                            <input class="form-check-input" type="radio" [id]="'question_' + question.id + '_option_' + option.id" [name]="'question_' + question.id" [value]="option.id" [disabled]="isReadOnly()" [checked]="isRadioOptionSelected(question.id, option.id)" [attr.data-question-id]="question.id" [attr.data-option-id]="option.id" (change)="onRadioOptionChanged(question, option)">
+                                            <label class="form-check-label" [for]="'question_' + question.id + '_option_' + option.id">
+                                                {{ option.text }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Checkbox Question (questionTypeId == 5) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 5">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="form-check mb-2" *ngFor="let option of question.options; let optIndex = index">
+                                            <input class="form-check-input" type="checkbox" [disabled]="isReadOnly()" [id]="'question_' + question.id + '_option_' + option.id" (change)="onQuestionAnswered(question, option)" [value]="option.id">
+                                            <label class="form-check-label" [for]="'question_' + question.id + '_option_' + option.id">
+                                                {{ option.text }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Range Question (questionTypeId == 6) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 6">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="range-input-container">
+                                            <input type="range" class="form-range" [disabled]="isReadOnly()" [class.is-invalid]="isQuestionInvalid(question)" [formControlName]="'question_' + question.id" [min]="question.questionValidation?.minValue || 0" [max]="question.questionValidation?.maxValue || 100" [step]="question.questionValidation?.step || 1" (input)="onRangeValueChanged(question, $event)" />
+                                            <div class="range-value-display text-center mt-2">
+                                                <span class="badge bg-primary">{{ getQuestionControl(question.id)?.value || question.questionValidation?.minValue || 0 }}</span>
+                                            </div>
+                                            <div class="range-labels d-flex justify-content-between">
+                                                <small class="text-muted">{{ question.questionValidation?.minValue || 0 }}</small>
+                                                <small class="text-muted">{{ question.questionValidation?.maxValue || 100 }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted" *ngIf="question.questionValidation && !isQuestionInvalid(question)">
+                                            {{ getRangeValidationHint(question) }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <!-- Image Upload Question (questionTypeId == 7) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 7">
+                                    <div class="col-lg-4 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="upload-controls mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-md-6">
+                                                    <label for="fileInput_{{question.id}}" class="btn btn-outline-primary w-100">
+                                                        <i class="ri-upload-2-line me-2"></i> Upload from Gallery </label>
+                                                    <input type="file" [id]="'fileInput_' + question.id" [disabled]="isReadOnly()" class="d-none" accept="image/*" multiple [class.is-invalid]="isQuestionInvalid(question)" (change)="onImagesSelected(question, $event)" #imageFileInput />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <button type="button" class="btn btn-outline-success w-100" [disabled]="isReadOnly()" (click)="openCamera(question.id)">
+                                                        <i class="ri-camera-line me-2"></i> Take Photo </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <small class="text-muted">
+                                                <i class="ri-information-line me-1"></i> Maximum file size: 100MB per image. Supported formats: JPG, PNG, GIF </small>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <div class="image-preview-container mt-3" *ngIf="getSelectedImages(question.id).length > 0">
+                                            <div class="row g-2">
+                                                <div class="col-6 col-md-4 col-lg-3" *ngFor="let image of getSelectedImages(question.id); let i = index">
+                                                    <div class="image-card">
+                                                        <div class="image-header d-flex justify-content-between align-items-center mb-2">
+                                                            <h6 class="mb-0">
+                                                                <i [class]="image.source === 'camera' ? 'ri-camera-line text-success' : 'ri-gallery-line text-primary'" class="me-1"></i> Image {{ i + 1 }}
+                                                            </h6>
+                                                            <span class="badge" [class]="image.source === 'camera' ? 'bg-success' : 'bg-primary'">
+                                                                {{ image.source === 'camera' ? 'Camera' : 'Gallery' }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="image-preview-container position-relative">
+                                                            <div class="image-wrapper position-relative" (click)="openImagePreview(image, question.id)" style="cursor: pointer;">
+                                                                <img [src]="surveyProcessService.sanitizeImageUrl(image.preview)" [alt]="image.name" class="img-thumbnail image-hover-effect" style="width: 100%; height: 150px; object-fit: cover;">
+                                                                <div class="image-overlay d-flex align-items-center justify-content-center">
+                                                                    <i class="ri-eye-line text-white fs-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="image-info mt-1">
+                                                                <small class="text-muted d-block text-truncate" [title]="image.name">
+                                                                    {{ image.name }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    {{ surveyProcessService.formatFileSize(image.size) }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    <i class="ri-time-line me-1"></i>
+                                                                    {{ formatUploadDate(image.uploadedAt) }}
+                                                                </small>
+                                                                <small class="text-muted d-block">
+                                                                    <i [class]="image.source === 'camera' ? 'ri-camera-line text-success' : 'ri-gallery-line text-primary'" class="me-1"></i>
+                                                                    {{ image.source === 'camera' ? 'Captured' : 'Uploaded' }}
+                                                                </small>
+                                                                <button type="button" class="btn btn-sm btn-danger mt-2 w-100" [disabled]="isReadOnly()" (click)="removeImage(question.id, i); $event.stopPropagation()">
+                                                                    <i class="ri-delete-bin-line me-1"></i> Remove </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="upload-summary mt-3 p-3 bg-light rounded">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <i class="ri-image-line me-2 text-primary"></i>
+                                                            <strong>{{ getSelectedImages(question.id).length }}</strong>
+                                                            <span class="ms-1">image(s) selected</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center" *ngIf="getTotalFileSize(question.id) > 0">
+                                                            <i class="ri-file-3-line me-2 text-info"></i>
+                                                            <span>Total size: <strong>{{ surveyProcessService.formatFileSize(getTotalFileSize(question.id)) }}</strong>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="image-sources text-end">
+                                                            <div class="d-flex justify-content-end align-items-center mb-1" *ngIf="getCameraImageCount(question.id) > 0">
+                                                                <i class="ri-camera-line text-success me-1"></i>
+                                                                <small class="text-muted">
+                                                                    {{ getCameraImageCount(question.id) }} from camera </small>
+                                                            </div>
+                                                            <div class="d-flex justify-content-end align-items-center" *ngIf="getGalleryImageCount(question.id) > 0">
+                                                                <i class="ri-gallery-line text-primary me-1"></i>
+                                                                <small class="text-muted">
+                                                                    {{ getGalleryImageCount(question.id) }} from gallery </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="quick-actions mt-2 pt-2 border-top">
+                                                    <div class="row g-2">
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="imageFileInput.click()">
+                                                                <i class="ri-add-line me-1"></i> Add More </button>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn btn-sm btn-outline-success w-100" [disabled]="isReadOnly()" (click)="openCamera(question.id)">
+                                                                <i class="ri-camera-line me-1"></i> Take Another </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="upload-instructions text-center p-4 border border-dashed rounded" *ngIf="getSelectedImages(question.id).length === 0">
+                                            <div class="upload-icons mb-3">
+                                                <i class="ri-camera-line fs-1 text-success me-3"></i>
+                                                <i class="ri-gallery-line fs-1 text-primary"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-2">No images selected</h6>
+                                            <p class="text-muted mb-3">Choose how you'd like to add images:</p>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="imageFileInput.click()">
+                                                        <i class="ri-gallery-line me-1"></i> Gallery </button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-outline-success w-100" [disabled]="isReadOnly()" (click)="openCamera(question.id)">
+                                                        <i class="ri-camera-line me-1"></i> Camera </button>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted mt-2 d-block"> You can use both methods to add multiple images </small>
+                                        </div>
+                                        <div class="camera-status mt-2" *ngIf="!isReadOnly()">
+                                            <small class="text-muted d-flex align-items-center">
+                                                <i class="ri-smartphone-line me-1"></i>
+                                                <span>Camera available on mobile devices and tablets</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- File Upload Question (questionTypeId == 8) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 8 && question.questionDisplayOption">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <input type="file" [disabled]="isReadOnly()" class="form-control mb-3" [id]="'file_input_' + question.id" accept=".pdf,.doc,.docx,.txt,.csv" multiple (change)="onDocumentFilesSelected(question, $event)">
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <div class="selected-files" *ngIf="hasSelectedFiles(question.id)">
+                                            <h6>Selected Documents ({{ getSelectedFilesCount(question.id) }})</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-2" *ngFor="let file of getSelectedFiles(question.id); let i = index">
+                                                    <div class="file-preview-container border rounded p-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="file-icon me-3">
+                                                                <i [class]="getFileIcon(file.name)" style="font-size: 2rem;"></i>
+                                                            </div>
+                                                            <div class="file-info flex-grow-1">
+                                                                <div class="file-name fw-bold text-truncate" [title]="file.name">
+                                                                    {{ file.name }}
+                                                                </div>
+                                                                <small class="text-muted d-block">{{ getFileType(file.name) }}</small>
+                                                                <small class="text-muted d-block">{{ surveyProcessService.formatFileSize(file.size) }}</small>
+                                                                <small class="text-muted d-block">{{ formatUploadDate(file.uploadedAt) }}</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="file-actions mt-2 d-flex gap-2">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" (click)="downloadFile(file)" title="Download file">
+                                                                <i class="ri-download-line me-1"></i> Download </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile(question.id, i)" title="Remove file">
+                                                                <i class="ri-delete-bin-line me-1"></i> Remove </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-muted"> Total size: {{ surveyProcessService.formatFileSize(getTotalDocumentFileSize(question.id)) }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="text-center" *ngIf="getSelectedFiles(question.id).length === 0">
+                                            <div class="upload-instructions p-4 border border-dashed rounded">
+                                                <i class="ri-upload-cloud-line fs-1 text-muted"></i>
+                                                <p class="text-muted mb-1">Click to select CSV or Word documents</p>
+                                                <small class="text-muted">Supported formats: CSV, DOC, DOCX, TXT</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Signature Question (questionTypeId == 9) -->
+                                <!-- <div class="row mb-3" *ngIf="question.questionTypeId == 9"><div class="col-lg-4 user-form-label" *ngIf="!question.questionDisplayOption"><label class="form-label" 
+                                        [class.text-danger]="isQuestionInvalid(question)"
+                                        [sanitizeHtml]="question.description"></label><span class="text-danger" *ngIf="!question.isOptional">*</span></div><div class="col-lg-12 user-form-label" *ngIf="question.questionDisplayOption"><label class="form-label" 
+                                        [class.text-danger]="isQuestionInvalid(question)"
+                                        [sanitizeHtml]="question.description"></label><span class="text-danger" *ngIf="!question.isOptional">*</span></div><div [class]="question.questionDisplayOption ? 'col-lg-12' : 'col-lg-8'" class="form-values"><app-signature-pad 
+                                        #signaturePad
+                                        [defaultValue]="getSignatureValue(question.id)"
+                                        [isDisabled]="isReadOnly()"
+                                        (imageUrl)="onSignatureCaptured(question, $event)"
+                                        (signatureChanged)="onSignatureStatusChanged(question, $event)"
+                                        (cleared)="onSignatureCleared(question)"
+                                        (beginSign)="onSignatureBegin(question)"
+                                        (endSign)="onSignatureEnd(question)"></app-signature-pad><div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                        {{ getValidationErrorMessage(question) }}
+                                    </div><small class="form-text text-muted mt-2" *ngIf="!isQuestionInvalid(question)"></small></div></div> -->
+                                <!-- Sketch Question (questionTypeId == 10) -->
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 10 || question.questionTypeId == 9">
+                                    <div class="col-lg-12 user-form-label" *ngIf="!question.questionDisplayOption">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 user-form-label" *ngIf="question.questionDisplayOption">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div class="sketch-container">
+                                            <div class="sketch-preview" *ngIf="getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-preview-wrapper position-relative">
+                                                    <img [src]="getSketchValue(question.id)" [alt]="question.questionTypeId == 9 ? 'Signature preview' : 'Sketch preview'" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
+                                                    <div class="sketch-overlay d-flex align-items-center justify-content-center">
+                                                        <div class="text-white text-center">
+                                                            <i class="ri-edit-line fs-2 mb-2 d-block"></i>
+                                                            <small>Click to edit {{ question.questionTypeId == 9 ? 'signature' : 'sketch' }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="sketch-info mt-2">
+                                                    <small class="text-muted d-flex align-items-center">
+                                                        <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-palette-line me-1'"></i>
+                                                        {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }} created • Click to edit </small>
+                                                </div>
+                                            </div>
+                                            <div class="sketch-empty-state text-center p-4 border border-dashed rounded" *ngIf="!getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-icons mb-3">
+                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line fs-1 text-primary' : 'ri-palette-line fs-1 text-primary'"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-2">{{ question.questionTypeId == 9 ? 'Add your signature' : 'Create a sketch' }}</h6>
+                                                <p class="text-muted mb-3">Click to open fullscreen {{ question.questionTypeId == 9 ? 'signature' : 'drawing' }} canvas</p>
+                                                <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
+                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-pencil-line me-1'"></i>
+                                                    {{ question.questionTypeId == 9 ? 'Sign Here' : 'Start Drawing' }}
+                                                </button>
+                                                <small class="text-muted mt-2 d-block">
+                                                    {{ question.questionTypeId == 9 ? 'Use touch, mouse, or stylus to sign' : 'Use touch, mouse, or stylus to create your sketch' }}
+                                                </small>
+                                            </div>
+                                            <div class="sketch-actions mt-3" *ngIf="getSketchValue(question.id)">
+                                                <div class="row g-2">
+                                                    <div class="col-6">
+                                                        <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId)">
+                                                            <i class="ri-edit-line me-1"></i> Edit {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <button type="button" class="btn btn-outline-danger w-100" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
+                                                            <i class="ri-delete-bin-line me-1"></i> Clear {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted mt-2" *ngIf="!isQuestionInvalid(question)">
+                                            <i class="ri-information-line me-1"></i>
+                                            {{ question.questionTypeId == 9 ? 'Sign using the fullscreen canvas' : 'Draw sketches, diagrams, or annotations using the fullscreen canvas' }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="row mb-3" *ngIf="question.questionTypeId == 12">
+                                    <div class="col-lg-12 user-form-label">
+                                        <label class="form-label" [class.text-danger]="isQuestionInvalid(question)" [sanitizeHtml]="question.description"></label>
+                                        <span class="text-danger" *ngIf="!question.isOptional">*</span>
+                                    </div>
+                                    <div class="col-lg-12 form-values">
+                                        <div dir="ltr" class="text-center">
+                                            <ngb-rating class="stars" [max]="5" [rate]="getQuestionControl(question.id)?.value || 0" (rateChange)="onRatingChanged(question, $event)" [readonly]="false"></ngb-rating>
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
+                                            {{ getValidationErrorMessage(question) }}
+                                        </div>
+                                        <small class="form-text text-muted text-center" *ngIf="!isQuestionInvalid(question)"> Rate from 1 to 5 stars </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="position-fixed bottom-0 start-0 m-3" *ngIf="lastSaveTime" style="z-index: 1000;">
+                            <small class="badge bg-success">
+                                <i class="ri-save-line me-1"></i> Last saved: {{ lastSaveTime | date:'HH:mm:ss' }}
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </aw-wizard-step>
+        </aw-wizard>
+    </div>
+</div>

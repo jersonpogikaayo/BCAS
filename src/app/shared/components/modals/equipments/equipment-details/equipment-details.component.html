@@ -1,0 +1,126 @@
+<ng-container *ngIf="equipment">
+    <table class="table table-responsive">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" class="header-section">
+                    Equipment Detail
+                </th>
+                <th scope="col" class="header-section retired" *ngIf="isRetired">
+                    Retired
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <table class="table table-responsive">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Asset Number</th>
+                <th scope="col">Serial Number</th>
+                <th scope="col">GMDN Number</th>
+                <th scope="col">ECRI Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td *ngIf="equipment.id">{{ equipment.id }}</td>
+                <td *ngIf="equipment.assetNumber">{{ equipment.assetNumber }}</td>
+                <td *ngIf="equipment.serialNumber">{{ equipment.serialNumber }}</td>
+                <td *ngIf="equipment.gmdn">{{ equipment.gmdn }}</td>
+                <td *ngIf="!equipment.gmdn" class="red">No Data</td>
+                <td *ngIf="equipment.ecri">{{ equipment.ecri }}</td>
+                <td *ngIf="!equipment.ecri" class="red">No Data</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-responsive">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Equipment Type</th>
+                <th scope="col">Manufacturer</th>
+                <th scope="col">Model</th>
+                <th scope="col">Current Condition</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td *ngIf="equipment.equipmentType">{{ equipment.equipmentType.name }}</td>
+                <td *ngIf="!equipment.equipmentType" class="red">No Data</td>
+
+                <td *ngIf="equipment.manufacturer">{{ equipment.manufacturer.name }}</td>
+                <td *ngIf="!equipment.manufacturer" class="red">No Data</td>
+
+                <td *ngIf="equipment.model">{{ equipment.model.name }}</td>
+                <td *ngIf="!equipment.model" class="red">No Data</td>
+
+                <td *ngIf="equipment.condition">{{ equipment.condition.name }}</td>
+                <td *ngIf="!equipment.condition" class="red">No Data</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-responsive">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Manufacturer Date</th>
+                <th scope="col">PPM Due Date</th>
+                <th scope="col">Last Service Date</th>
+                <th scope="col">Next Service Date</th>
+                <th scope="col">Acceptance Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td *ngIf="equipment.manufactureDate">{{ equipment.manufactureDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.manufactureDate" class="red">No Data</td>
+
+                <td *ngIf="equipment.ppmDueDate">{{ equipment.ppmDueDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.ppmDueDate" class="red">No Data</td>
+
+                <td *ngIf="equipment.lastServiceDate">{{ equipment.lastServiceDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.lastServiceDate" class="red">No Date</td>
+
+                <td *ngIf="equipment.lastServiceExpiryDate">{{ equipment.lastServiceExpiryDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.lastServiceExpiryDate" class="red">No Date</td>
+
+                <td *ngIf="equipment.acceptanceCheckedDate">{{ equipment.acceptanceCheckedDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.acceptanceCheckedDate" class="red">No Date</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-responsive">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Level Of Cover</th>
+                <th scope="col">Service Lifespan(days)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td *ngIf="equipment.levelOfCover">{{ equipment.levelOfCover }}</td>
+                <td *ngIf="!equipment.levelOfCover" class="red">No Data</td>
+
+                <td *ngIf="equipment.lifeSpan">{{ equipment.lifeSpan }}</td>
+                <td *ngIf="!equipment.lifeSpan" class="red">No Data</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-responsive" *ngIf="isRetired">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Retired By</th>
+                <th scope="col">Retired Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td *ngIf="equipment.retiredByUsername">{{ equipment.retiredByUsername }}</td>
+                <td *ngIf="!equipment.retiredByUsername" class="red">No Data</td>
+
+                <td *ngIf="equipment.retiredDate">{{ equipment.retiredDate | date: 'yyyy-MM-dd' }}</td>
+                <td *ngIf="!equipment.retiredDate" class="red">No Data</td>
+            </tr>
+        </tbody>
+    </table>
+</ng-container>
+<div class="text-center" *ngIf="!equipment">No Equipment Data Available</div>

@@ -1,0 +1,8 @@
+.full-height-row {
+  height: 84vh;
+}
+.full-height-row app-common-datagrid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

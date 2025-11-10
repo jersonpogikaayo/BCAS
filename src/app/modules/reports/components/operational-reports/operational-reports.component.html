@@ -1,0 +1,268 @@
+<div class="row">
+  <div class="col-lg-12">
+      <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-lg-3" style="align-self: end;">
+                <label for="exampleInputdate" class="form-label">Customer</label>
+                <ng-select class="custom form-control" [items]="customer" bindLabel="name" bindValue="id" [(ngModel)]="selectedCustomerId" *ngIf="customer"></ng-select>
+              </div>
+              <div class="col-lg-6">
+                <div class="mt-3">
+                  <label class="form-label mb-0">Date Range</label>
+                  <input type="text" ngxDaterangepickerMd
+                    [(ngModel)]="dateRange"
+                    [showCustomRangeLabel]="true"
+                    [alwaysShowCalendars]="true"
+                    [ranges]="ranges"
+                    [linkedCalendars]="true"
+                    [isInvalidDate] = "isInvalidDate"
+                    [showClearButton]="false"
+                  class="form-control"/>
+              </div>
+              </div>
+              <div class="col-lg-3" style="align-self: end;">
+                  <button type="button" class="btn btn-primary waves-effect waves-light" (click)="search()">
+                    <span class="flex-grow-1 me-2">
+                    Submit
+                    </span>
+                    <span class="spinner-border flex-shrink-0" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                  </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body" *ngIf="submitted && !isLoading">
+              <div class="row ind-table" *ngIf="newJobsData.length != 0">
+                  <h5>New</h5>
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>Status / Date</th>
+                              <th *ngFor="let monthYear of uniqueMonthYears"> {{ monthYear | date }}</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(newJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 0)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="acceptedJobsData.length != 0">
+                  <h5>Accepted</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(acceptedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 1)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="assignedJobsData.length != 0">
+                  <h5>Assigned</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(assignedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 2)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="actionedJobsData.length != 0">
+                  <h5>Actioned</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(actionedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 3)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="rejectedJobsData.length != 0">
+                  <h5>Rejected</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(rejectedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 4)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="bookedJobsData.length != 0">
+                  <h5>Booked</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(bookedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 5)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="confirmedJobsData.length != 0">
+                  <h5>Confirmed</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(confirmedJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 6)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="progressJobsData.length != 0">
+                  <h5>Progress</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(progressJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 7)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="incompleteJobsData.length != 0">
+                  <h5>Incomplete</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(incompleteJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 8)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="failJobsData.length != 0">
+                  <h5>Fail</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(failJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 9)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="pendingReviewJobsData.length != 0">
+                  <h5>Pending Review</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(pendingReviewJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 10)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="completeJobsData.length != 0">
+                  <h5>Complete</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(completeJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 11)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="repairJobsData.length != 0">
+                  <h5>Repair</h5>
+                  <table>
+                      <!-- <thead><tr><th>Status / Date</th><th *ngFor="let monthYear of uniqueMonthYears">{{ monthYear | date }}</th></tr></thead> -->
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(repairJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 12)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table" *ngIf="cancelJobsData.length != 0">
+                  <h5>Cancelled</h5>
+                  <table>
+                      <tbody>
+                          <tr *ngFor="let item of combineLabelsWithValues(cancelJobsData); let i = index">
+                              <td>{{item.label}}</td>
+                              <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                  <td (click)="openJobsModal(monthYear, 13)" *ngIf="item['value_' + monthYear] !== 0"><a href="javascript:void(0)">{{ item['value_' + monthYear] }}</a></td>
+                                  <td *ngIf="item['value_' + monthYear] === 0">{{ item['value_' + monthYear] }}</td>
+                              </ng-container>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="row ind-table">
+                <h5>Total</h5>
+                <table>
+                    <tbody>
+                        <tr *ngFor="let item of combineLabelsWithValues(totalJobsData); let i = index">
+                            <td>{{item.label}}</td>
+                            <ng-container *ngFor="let monthYear of uniqueMonthYears">
+                                <td>{{ item['value_' + monthYear] }}</td>
+                            </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+              
+          </div>
+        </div>
+    </div>
+</div>

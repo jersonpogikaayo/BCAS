@@ -1,0 +1,54 @@
+<div class="card">
+    <div class="card-header">
+        <h5>User Setting</h5>
+    </div>
+    <div class="card-body" *ngIf="userSettingForm">
+        <form [formGroup]="userSettingForm">
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="nameInput" class="form-label">First Name</label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="nameInput" placeholder="Enter your first name" formControlName="firstName" [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }">
+                    <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
+                      </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label for="websiteUrl" class="form-label">Last Name</label>
+                </div>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="nameInput" placeholder="Enter your last name" formControlName="lastName" [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }">
+                    <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback" align="left">
+                        <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
+                      </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label class="form-check-label" for="customSwitchsizelg">Debug Mode</label>
+                </div>
+                <div class="col-lg-10">
+                    <div class="form-check form-switch form-switch-lg">
+                        <input type="checkbox" class="form-check-input" id="customSwitchsizelg" formControlName="debugMode">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-2">
+                    <label class="form-check-label" for="customSwitchsizelg">Offline Mode</label>
+                </div>
+                <div class="col-lg-10">
+                    <div class="form-check form-switch form-switch-lg">
+                        <input type="checkbox" class="form-check-input" id="customSwitchsizelg" formControlName="offlineMode">
+                    </div>
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary" (click)="save()">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

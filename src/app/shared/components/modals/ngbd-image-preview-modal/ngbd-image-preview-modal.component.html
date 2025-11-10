@@ -1,0 +1,36 @@
+<div class="modal-header image-modal-header">
+  <app-section-header [title]="currentImage.name"></app-section-header>
+    <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+</div>
+<div class="modal-body p-0">
+    <div class="image-preview-modal">
+        <button type="button" class="btn btn-primary btn-sm position-absolute start-0 top-50 translate-middle-y ms-2 nav-btn" style="z-index: 10;" [disabled]="!hasPrevious()" (click)="previousImage()" *ngIf="allImages.length > 1">
+            <i class="ri-arrow-left-line"></i>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm position-absolute end-0 top-50 translate-middle-y me-2 nav-btn" style="z-index: 10;" [disabled]="!hasNext()" (click)="nextImage()" *ngIf="allImages.length > 1">
+            <i class="ri-arrow-right-line"></i>
+        </button>
+        <div class="text-center image-container">
+            <img [src]="surveyProcessService.sanitizeImageUrl(currentImage.preview)" [alt]="currentImage.name" class="img-fluid" style="max-height: 70vh; width: auto;">
+        </div>
+        <div class="image-info-bar p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h6 class="mb-1 text-white">{{ currentImage.name }}</h6>
+                    <small class="text-light">
+                        {{ surveyProcessService.formatFileSize(currentImage.size) }}
+                        <span *ngIf="allImages.length > 1" class="ms-2"> ({{ currentImageIndex + 1 }} of {{ allImages.length }}) </span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer image-modal-footer d-flex justify-content-between">
+    <div>
+        <button type="button" class="btn btn-light btn-sm download-btn" (click)="downloadImage()" title="Download Image"> Download </button>
+    </div>
+    <div>
+        <button type="button" class="btn btn-light" (click)="close()"> Close </button>
+    </div>
+</div>
