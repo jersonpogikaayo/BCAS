@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  parameter-store:
+    build_ssh_key: "/github/dtc-qss/privatekey"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+  pre_build:
+    commands:
+      - echo "Setting up github keys..."
+      - mkdir -p ~/.ssh
+      - echo "$build_ssh_key" > ~/.ssh/id_rsa
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts
+      - git config --global url."git@github.com:".insteadof "https://github.com/"
+      - echo "Installing dependencies..."
+      - npm install -g @angular/cli
+      - npm install
+      # Insert dependencies
+  build:
+    commands:
+      - echo "Building angular project..."
+      - ng build
+  post_build:
+    commands:
+      - echo "Updating S3 Content..."
+      - aws s3 sync dist/web-client/ s3://directtocarrier.io --delete
