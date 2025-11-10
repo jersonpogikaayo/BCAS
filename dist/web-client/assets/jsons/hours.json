@@ -1,0 +1,383 @@
+[{
+        "prettyName": "00:00",
+        "techName": "00:00:00"
+    },
+    {
+        "prettyName": "00:15",
+        "techName": "00:15:00"
+    },
+    {
+        "prettyName": "00:30",
+        "techName": "00:30:00"
+    },
+    {
+        "prettyName": "00:45",
+        "techName": "00:45:00"
+    },
+    {
+        "prettyName": "01:00",
+        "techName": "01:00:00"
+    },
+    {
+        "prettyName": "01:15",
+        "techName": "01:15:00"
+    },
+    {
+        "prettyName": "01:30",
+        "techName": "01:30:00"
+    },
+    {
+        "prettyName": "01:45",
+        "techName": "01:45:00"
+    },
+    {
+        "prettyName": "02:00",
+        "techName": "02:00:00"
+    },
+    {
+        "prettyName": "02:15",
+        "techName": "02:15:00"
+    },
+    {
+        "prettyName": "02:30",
+        "techName": "02:30:00"
+    },
+    {
+        "prettyName": "02:45",
+        "techName": "02:45:00"
+    },
+    {
+        "prettyName": "03:00",
+        "techName": "03:00:00"
+    },
+    {
+        "prettyName": "03:15",
+        "techName": "03:15:00"
+    },
+    {
+        "prettyName": "03:30",
+        "techName": "03:30:00"
+    },
+    {
+        "prettyName": "03:45",
+        "techName": "03:45:00"
+    },
+    {
+        "prettyName": "04:00",
+        "techName": "04:00:00"
+    },
+    {
+        "prettyName": "04:15",
+        "techName": "04:15:00"
+    }, {
+        "prettyName": "04:30",
+        "techName": "04:30:00"
+    },
+    {
+        "prettyName": "04:45",
+        "techName": "04:45:00"
+    },
+    {
+        "prettyName": "05:00",
+        "techName": "05:00:00"
+    },
+    {
+        "prettyName": "05:15",
+        "techName": "05:15:00"
+    },
+    {
+        "prettyName": "05:30",
+        "techName": "05:30:00"
+    },
+    {
+        "prettyName": "05:45",
+        "techName": "05:45:00"
+    },
+    {
+        "prettyName": "06:00",
+        "techName": "06:00:00"
+    },
+    {
+        "prettyName": "06:15",
+        "techName": "06:15:00"
+    },
+    {
+        "prettyName": "06:30",
+        "techName": "06:30:00"
+    },
+    {
+        "prettyName": "06:45",
+        "techName": "06:45:00"
+    },
+    {
+        "prettyName": "07:00",
+        "techName": "07:00:00"
+    },
+    {
+        "prettyName": "07:15",
+        "techName": "07:15:00"
+    },
+    {
+        "prettyName": "07:30",
+        "techName": "07:30:00"
+    },
+    {
+        "prettyName": "07:45",
+        "techName": "07:45:00"
+    },
+    {
+        "prettyName": "08:00",
+        "techName": "08:00:00"
+    },
+    {
+        "prettyName": "08:15",
+        "techName": "08:15:00"
+    },
+    {
+        "prettyName": "08:30",
+        "techName": "08:30:00"
+    },
+    {
+        "prettyName": "08:45",
+        "techName": "08:45:00"
+    },
+    {
+        "prettyName": "09:00",
+        "techName": "09:00:00"
+    },
+    {
+        "prettyName": "09:15",
+        "techName": "09:15:00"
+    },
+    {
+        "prettyName": "09:30",
+        "techName": "09:30:00"
+    },
+    {
+        "prettyName": "09:45",
+        "techName": "09:45:00"
+    },
+    {
+        "prettyName": "10:00",
+        "techName": "10:00:00"
+    },
+    {
+        "prettyName": "10:15",
+        "techName": "10:15:00"
+    },
+    {
+        "prettyName": "10:30",
+        "techName": "10:30:00"
+    },
+    {
+        "prettyName": "10:45",
+        "techName": "10:45:00"
+    },
+    {
+        "prettyName": "11:00",
+        "techName": "11:00:00"
+    },
+    {
+        "prettyName": "11:15",
+        "techName": "11:15:00"
+    },
+    {
+        "prettyName": "11:30",
+        "techName": "11:30:00"
+    },
+    {
+        "prettyName": "11:45",
+        "techName": "11:45:00"
+    },
+    {
+        "prettyName": "12:00",
+        "techName": "12:00:00"
+    },
+    {
+        "prettyName": "12:15",
+        "techName": "12:15:00"
+    },
+    {
+        "prettyName": "12:30",
+        "techName": "12:30:00"
+    },
+    {
+        "prettyName": "12:45",
+        "techName": "12:45:00"
+    },
+    {
+        "prettyName": "13:00",
+        "techName": "13:00:00"
+    },
+    {
+        "prettyName": "13:15",
+        "techName": "13:15:00"
+    },
+    {
+        "prettyName": "13:30",
+        "techName": "13:30:00"
+    },
+    {
+        "prettyName": "13:45",
+        "techName": "13:45:00"
+    },
+    {
+        "prettyName": "14:00",
+        "techName": "14:00:00"
+    },
+    {
+        "prettyName": "14:15",
+        "techName": "14:15:00"
+    },
+    {
+        "prettyName": "14:30",
+        "techName": "14:30:00"
+    },
+    {
+        "prettyName": "14:45",
+        "techName": "14:45:00"
+    },
+    {
+        "prettyName": "15:00",
+        "techName": "15:00:00"
+    },
+    {
+        "prettyName": "15:15",
+        "techName": "15:15:00"
+    }, {
+        "prettyName": "15:30",
+        "techName": "15:30:00"
+    },
+    {
+        "prettyName": "15:45",
+        "techName": "15:45:00"
+    },
+    {
+        "prettyName": "16:00",
+        "techName": "16:00:00"
+    },
+    {
+        "prettyName": "16:15",
+        "techName": "16:15:00"
+    },
+    {
+        "prettyName": "16:30",
+        "techName": "16:30:00"
+    },
+    {
+        "prettyName": "16:45",
+        "techName": "16:45:00"
+    },
+    {
+        "prettyName": "17:00",
+        "techName": "17:00:00"
+    },
+    {
+        "prettyName": "17:15",
+        "techName": "06:15:00"
+    },
+    {
+        "prettyName": "17:30",
+        "techName": "17:30:00"
+    },
+    {
+        "prettyName": "17:45",
+        "techName": "17:45:00"
+    },
+    {
+        "prettyName": "18:00",
+        "techName": "18:00:00"
+    },
+    {
+        "prettyName": "18:15",
+        "techName": "18:15:00"
+    },
+    {
+        "prettyName": "18:30",
+        "techName": "18:30:00"
+    },
+    {
+        "prettyName": "18:45",
+        "techName": "18:45:00"
+    },
+    {
+        "prettyName": "19:00",
+        "techName": "19:00:00"
+    },
+    {
+        "prettyName": "19:15",
+        "techName": "19:15:00"
+    },
+    {
+        "prettyName": "19:30",
+        "techName": "19:30:00"
+    },
+    {
+        "prettyName": "19:45",
+        "techName": "19:45:00"
+    },
+    {
+        "prettyName": "20:00",
+        "techName": "20:00:00"
+    },
+    {
+        "prettyName": "20:15",
+        "techName": "20:15:00"
+    },
+    {
+        "prettyName": "20:30",
+        "techName": "20:30:00"
+    },
+    {
+        "prettyName": "20:45",
+        "techName": "20:45:00"
+    },
+    {
+        "prettyName": "21:00",
+        "techName": "21:00:00"
+    },
+    {
+        "prettyName": "21:15",
+        "techName": "21:15:00"
+    },
+    {
+        "prettyName": "21:30",
+        "techName": "10:30:00"
+    },
+    {
+        "prettyName": "21:45",
+        "techName": "21:45:00"
+    },
+    {
+        "prettyName": "22:00",
+        "techName": "22:00:00"
+    },
+    {
+        "prettyName": "22:15",
+        "techName": "22:15:00"
+    },
+    {
+        "prettyName": "22:30",
+        "techName": "22:30:00"
+    },
+    {
+        "prettyName": "22:45",
+        "techName": "22:45:00"
+    },
+    {
+        "prettyName": "23:00",
+        "techName": "23:00:00"
+    },
+    {
+        "prettyName": "23:15",
+        "techName": "23:15:00"
+    },
+    {
+        "prettyName": "23:30",
+        "techName": "23:30:00"
+    },
+    {
+        "prettyName": "23:45",
+        "techName": "19:45:00"
+    }
+]

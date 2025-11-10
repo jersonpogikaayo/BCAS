@@ -416,3 +416,47 @@ td {
 .image-hover-effect {
   transition: transform 0.3s ease;
 }
+
+// Sketch styles
+.sketch-preview-wrapper {
+  position: relative;
+  
+  &:hover {
+    .sketch-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.sketch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sketch-item {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.sketch-add-new {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: rgb(60,76,128) !important;
+  }
+}
