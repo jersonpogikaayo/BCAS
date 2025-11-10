@@ -315,50 +315,109 @@
                                         <span class="text-danger" *ngIf="!question.isOptional">*</span>
                                     </div>
                                     <div class="col-lg-12 form-values">
-                                        <div class="sketch-container">
+                                        <!-- Signature (Type 9) - Single sketch -->
+                                        <div class="sketch-container" *ngIf="question.questionTypeId == 9">
                                             <div class="sketch-preview" *ngIf="getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
                                                 <div class="sketch-preview-wrapper position-relative">
-                                                    <img [src]="getSketchValue(question.id)" [alt]="question.questionTypeId == 9 ? 'Signature preview' : 'Sketch preview'" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
+                                                    <img [src]="getSketchValue(question.id)" alt="Signature preview" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
                                                     <div class="sketch-overlay d-flex align-items-center justify-content-center">
                                                         <div class="text-white text-center">
                                                             <i class="ri-edit-line fs-2 mb-2 d-block"></i>
-                                                            <small>Click to edit {{ question.questionTypeId == 9 ? 'signature' : 'sketch' }}</small>
+                                                            <small>Click to edit signature</small>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="sketch-info mt-2">
                                                     <small class="text-muted d-flex align-items-center">
-                                                        <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-palette-line me-1'"></i>
-                                                        {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }} created • Click to edit </small>
+                                                        <i class="ri-quill-pen-line me-1"></i>
+                                                        Signature created • Click to edit </small>
                                                 </div>
                                             </div>
                                             <div class="sketch-empty-state text-center p-4 border border-dashed rounded" *ngIf="!getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
                                                 <div class="sketch-icons mb-3">
-                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line fs-1 text-primary' : 'ri-palette-line fs-1 text-primary'"></i>
+                                                    <i class="ri-quill-pen-line fs-1 text-primary"></i>
                                                 </div>
-                                                <h6 class="text-muted mb-2">{{ question.questionTypeId == 9 ? 'Add your signature' : 'Create a sketch' }}</h6>
-                                                <p class="text-muted mb-3">Click to open fullscreen {{ question.questionTypeId == 9 ? 'signature' : 'drawing' }} canvas</p>
+                                                <h6 class="text-muted mb-2">Add your signature</h6>
+                                                <p class="text-muted mb-3">Click to open fullscreen signature canvas</p>
                                                 <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
-                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-pencil-line me-1'"></i>
-                                                    {{ question.questionTypeId == 9 ? 'Sign Here' : 'Start Drawing' }}
+                                                    <i class="ri-quill-pen-line me-1"></i>
+                                                    Sign Here
                                                 </button>
                                                 <small class="text-muted mt-2 d-block">
-                                                    {{ question.questionTypeId == 9 ? 'Use touch, mouse, or stylus to sign' : 'Use touch, mouse, or stylus to create your sketch' }}
+                                                    Use touch, mouse, or stylus to sign
                                                 </small>
                                             </div>
                                             <div class="sketch-actions mt-3" *ngIf="getSketchValue(question.id)">
                                                 <div class="row g-2">
                                                     <div class="col-6">
                                                         <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId)">
-                                                            <i class="ri-edit-line me-1"></i> Edit {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                            <i class="ri-edit-line me-1"></i> Edit Signature
                                                         </button>
                                                     </div>
                                                     <div class="col-6">
                                                         <button type="button" class="btn btn-outline-danger w-100" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
-                                                            <i class="ri-delete-bin-line me-1"></i> Clear {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                            <i class="ri-delete-bin-line me-1"></i> Clear Signature
                                                         </button>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Sketch (Type 10) - Multiple sketches -->
+                                        <div class="sketch-container" *ngIf="question.questionTypeId == 10">
+                                            <!-- Display existing sketches in a grid -->
+                                            <div class="sketches-grid row g-3 mb-3" *ngIf="hasSelectedSketches(question.id)">
+                                                <div class="col-md-6 col-lg-4" *ngFor="let sketch of getSelectedSketches(question.id); let i = index">
+                                                    <div class="sketch-item card">
+                                                        <div class="sketch-preview-wrapper position-relative">
+                                                            <img [src]="sketch.data" alt="Sketch preview" class="card-img-top" style="height: 200px; object-fit: contain; border-bottom: 1px solid #dee2e6; cursor: pointer;" (click)="openSketchModal(question.id, question.questionTypeId, i)">
+                                                            <div class="sketch-overlay d-flex align-items-center justify-content-center">
+                                                                <div class="text-white text-center">
+                                                                    <i class="ri-edit-line fs-2 mb-2 d-block"></i>
+                                                                    <small>Click to edit</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body p-2">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-muted">
+                                                                    <i class="ri-palette-line me-1"></i>
+                                                                    Sketch {{ i + 1 }}
+                                                                </small>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="isReadOnly()" (click)="removeSketch(question.id, i)" title="Delete sketch">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Add new sketch button -->
+                                            <div class="sketch-add-new text-center p-4 border border-dashed rounded" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-icons mb-3">
+                                                    <i class="ri-palette-line fs-1 text-primary"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-2">
+                                                    {{ hasSelectedSketches(question.id) ? 'Add another sketch' : 'Create a sketch' }}
+                                                </h6>
+                                                <p class="text-muted mb-3" *ngIf="hasSelectedSketches(question.id)">
+                                                    {{ getSelectedSketchesCount(question.id) }} sketch(es) added
+                                                </p>
+                                                <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
+                                                    <i class="ri-add-line me-1"></i>
+                                                    {{ hasSelectedSketches(question.id) ? 'Add Sketch' : 'Start Drawing' }}
+                                                </button>
+                                                <small class="text-muted mt-2 d-block">
+                                                    Use touch, mouse, or stylus to create your sketch
+                                                </small>
+                                            </div>
+                                            
+                                            <!-- Clear all sketches button -->
+                                            <div class="sketch-actions mt-3" *ngIf="hasSelectedSketches(question.id)">
+                                                <button type="button" class="btn btn-outline-danger" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
+                                                    <i class="ri-delete-bin-line me-1"></i> Clear All Sketches
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">
@@ -698,50 +757,109 @@
                                         <span class="text-danger" *ngIf="!question.isOptional">*</span>
                                     </div>
                                     <div class="col-lg-12 form-values">
-                                        <div class="sketch-container">
+                                        <!-- Signature (Type 9) - Single sketch -->
+                                        <div class="sketch-container" *ngIf="question.questionTypeId == 9">
                                             <div class="sketch-preview" *ngIf="getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
                                                 <div class="sketch-preview-wrapper position-relative">
-                                                    <img [src]="getSketchValue(question.id)" [alt]="question.questionTypeId == 9 ? 'Signature preview' : 'Sketch preview'" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
+                                                    <img [src]="getSketchValue(question.id)" alt="Signature preview" class="img-thumbnail sketch-preview-image" style="width: 100%; max-width: 400px; height: 200px; object-fit: contain; border: 2px dashed #dee2e6;">
                                                     <div class="sketch-overlay d-flex align-items-center justify-content-center">
                                                         <div class="text-white text-center">
                                                             <i class="ri-edit-line fs-2 mb-2 d-block"></i>
-                                                            <small>Click to edit {{ question.questionTypeId == 9 ? 'signature' : 'sketch' }}</small>
+                                                            <small>Click to edit signature</small>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="sketch-info mt-2">
                                                     <small class="text-muted d-flex align-items-center">
-                                                        <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-palette-line me-1'"></i>
-                                                        {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }} created • Click to edit </small>
+                                                        <i class="ri-quill-pen-line me-1"></i>
+                                                        Signature created • Click to edit </small>
                                                 </div>
                                             </div>
                                             <div class="sketch-empty-state text-center p-4 border border-dashed rounded" *ngIf="!getSketchValue(question.id)" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
                                                 <div class="sketch-icons mb-3">
-                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line fs-1 text-primary' : 'ri-palette-line fs-1 text-primary'"></i>
+                                                    <i class="ri-quill-pen-line fs-1 text-primary"></i>
                                                 </div>
-                                                <h6 class="text-muted mb-2">{{ question.questionTypeId == 9 ? 'Add your signature' : 'Create a sketch' }}</h6>
-                                                <p class="text-muted mb-3">Click to open fullscreen {{ question.questionTypeId == 9 ? 'signature' : 'drawing' }} canvas</p>
+                                                <h6 class="text-muted mb-2">Add your signature</h6>
+                                                <p class="text-muted mb-3">Click to open fullscreen signature canvas</p>
                                                 <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
-                                                    <i [class]="question.questionTypeId == 9 ? 'ri-quill-pen-line me-1' : 'ri-pencil-line me-1'"></i>
-                                                    {{ question.questionTypeId == 9 ? 'Sign Here' : 'Start Drawing' }}
+                                                    <i class="ri-quill-pen-line me-1"></i>
+                                                    Sign Here
                                                 </button>
                                                 <small class="text-muted mt-2 d-block">
-                                                    {{ question.questionTypeId == 9 ? 'Use touch, mouse, or stylus to sign' : 'Use touch, mouse, or stylus to create your sketch' }}
+                                                    Use touch, mouse, or stylus to sign
                                                 </small>
                                             </div>
                                             <div class="sketch-actions mt-3" *ngIf="getSketchValue(question.id)">
                                                 <div class="row g-2">
                                                     <div class="col-6">
                                                         <button type="button" class="btn btn-outline-primary w-100" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId)">
-                                                            <i class="ri-edit-line me-1"></i> Edit {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                            <i class="ri-edit-line me-1"></i> Edit Signature
                                                         </button>
                                                     </div>
                                                     <div class="col-6">
                                                         <button type="button" class="btn btn-outline-danger w-100" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
-                                                            <i class="ri-delete-bin-line me-1"></i> Clear {{ question.questionTypeId == 9 ? 'Signature' : 'Sketch' }}
+                                                            <i class="ri-delete-bin-line me-1"></i> Clear Signature
                                                         </button>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Sketch (Type 10) - Multiple sketches -->
+                                        <div class="sketch-container" *ngIf="question.questionTypeId == 10">
+                                            <!-- Display existing sketches in a grid -->
+                                            <div class="sketches-grid row g-3 mb-3" *ngIf="hasSelectedSketches(question.id)">
+                                                <div class="col-md-6 col-lg-4" *ngFor="let sketch of getSelectedSketches(question.id); let i = index">
+                                                    <div class="sketch-item card">
+                                                        <div class="sketch-preview-wrapper position-relative">
+                                                            <img [src]="sketch.data" alt="Sketch preview" class="card-img-top" style="height: 200px; object-fit: contain; border-bottom: 1px solid #dee2e6; cursor: pointer;" (click)="openSketchModal(question.id, question.questionTypeId, i)">
+                                                            <div class="sketch-overlay d-flex align-items-center justify-content-center">
+                                                                <div class="text-white text-center">
+                                                                    <i class="ri-edit-line fs-2 mb-2 d-block"></i>
+                                                                    <small>Click to edit</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-body p-2">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-muted">
+                                                                    <i class="ri-palette-line me-1"></i>
+                                                                    Sketch {{ i + 1 }}
+                                                                </small>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="isReadOnly()" (click)="removeSketch(question.id, i)" title="Delete sketch">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Add new sketch button -->
+                                            <div class="sketch-add-new text-center p-4 border border-dashed rounded" (click)="openSketchModal(question.id, question.questionTypeId)" style="cursor: pointer;">
+                                                <div class="sketch-icons mb-3">
+                                                    <i class="ri-palette-line fs-1 text-primary"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-2">
+                                                    {{ hasSelectedSketches(question.id) ? 'Add another sketch' : 'Create a sketch' }}
+                                                </h6>
+                                                <p class="text-muted mb-3" *ngIf="hasSelectedSketches(question.id)">
+                                                    {{ getSelectedSketchesCount(question.id) }} sketch(es) added
+                                                </p>
+                                                <button type="button" class="btn btn-outline-primary" [disabled]="isReadOnly()" (click)="openSketchModal(question.id, question.questionTypeId); $event.stopPropagation()">
+                                                    <i class="ri-add-line me-1"></i>
+                                                    {{ hasSelectedSketches(question.id) ? 'Add Sketch' : 'Start Drawing' }}
+                                                </button>
+                                                <small class="text-muted mt-2 d-block">
+                                                    Use touch, mouse, or stylus to create your sketch
+                                                </small>
+                                            </div>
+                                            
+                                            <!-- Clear all sketches button -->
+                                            <div class="sketch-actions mt-3" *ngIf="hasSelectedSketches(question.id)">
+                                                <button type="button" class="btn btn-outline-danger" [disabled]="isReadOnly()" (click)="clearSketch(question.id)">
+                                                    <i class="ri-delete-bin-line me-1"></i> Clear All Sketches
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="invalid-feedback" *ngIf="isQuestionInvalid(question)" style="display: block;">

@@ -42,6 +42,7 @@ export class SurveyProcessComponent implements OnInit, OnDestroy, AfterViewInit 
 
   selectedImages: { [questionId: number]: any[] } = {};
   selectedFiles: { [questionId: number]: any[] } = {};
+  selectedSketches: { [questionId: number]: any[] } = {};
   signatureData: { [questionId: number]: string } = {};
   signatureDefaultValues: { [questionId: number]: string } = {};
 
@@ -428,6 +429,10 @@ export class SurveyProcessComponent implements OnInit, OnDestroy, AfterViewInit 
       case 9:
         delete this.signatureData[question.id];
         this.signatureDefaultValues[question.id] = '';
+        break;
+        
+      case 10:
+        delete this.selectedSketches[question.id];
         break;
         
       case 7:
@@ -1546,6 +1551,18 @@ private restoreSpecialQuestionData(question: SurveyQuestion, answerItem: any): v
         console.log('Restored signature for question:', questionId);
       }
       break;
+      
+    case 10:
+      if (answerItem.attachments && answerItem.attachments.length > 0) {
+        this.selectedSketches[questionId] = answerItem.attachments.map((attachment: any, index: number) => ({
+          data: `data:image/${attachment.mimeType};base64,${attachment.file}`,
+          name: attachment.name || `sketch_${questionId}_${index}.png`,
+          createdAt: new Date(),
+          isExisting: true
+        }));
+        console.log('Restored sketches for question:', questionId, this.selectedSketches[questionId]);
+      }
+      break;
   }
 }
 
@@ -1736,7 +1753,7 @@ private handleRatingValidationError(question: SurveyQuestion, answer: number, va
     return images.filter(img => img.source === 'gallery').length;
   }
 
-  openSketchModal(questionId: number, questionTypeId: number): void {
+  openSketchModal(questionId: number, questionTypeId: number, sketchIndex?: number): void {
     if (this.isReadOnly()) {
       console.log('Survey is read-only, sketch disabled');
       return;
@@ -1752,38 +1769,108 @@ private handleRatingValidationError(question: SurveyQuestion, answer: number, va
 
     modalRef.componentInstance.questionId = questionId;
     modalRef.componentInstance.questionTypeId = questionTypeId;
-    modalRef.componentInstance.existingSketch = this.getSketchValue(questionId);
+    
+    // Load existing sketch if editing, otherwise null for new sketch
+    if (sketchIndex !== undefined && this.selectedSketches[questionId] && this.selectedSketches[questionId][sketchIndex]) {
+      modalRef.componentInstance.existingSketch = this.selectedSketches[questionId][sketchIndex].data;
+    } else {
+      modalRef.componentInstance.existingSketch = null;
+    }
 
     modalRef.componentInstance.sketchSaved.subscribe((result: {questionId: number, sketchData: string}) => {
       console.log(result);
-      this.handleSketchSaved(result.questionId, result.sketchData);
+      this.handleSketchSaved(result.questionId, result.sketchData, sketchIndex);
     });
   }
 
-  private handleSketchSaved(questionId: number, sketchData: string): void {
+  private handleSketchSaved(questionId: number, sketchData: string, sketchIndex?: number): void {
+    const question = this.findQuestionById(questionId);
+    if (!question) return;
+
+    // Initialize sketches array if it doesn't exist
+    if (!this.selectedSketches[questionId]) {
+      this.selectedSketches[questionId] = [];
+    }
+
+    const sketchObject = {
+      data: sketchData,
+      name: `sketch_${questionId}_${Date.now()}.png`,
+      createdAt: new Date(),
+      isExisting: false
+    };
+
+    // Update existing sketch or add new one
+    if (sketchIndex !== undefined && sketchIndex < this.selectedSketches[questionId].length) {
+      this.selectedSketches[questionId][sketchIndex] = sketchObject;
+      console.log(`🎨 Sketch ${sketchIndex} updated for question ${questionId}`);
+    } else {
+      this.selectedSketches[questionId].push(sketchObject);
+      console.log(`🎨 New sketch added for question ${questionId}. Total: ${this.selectedSketches[questionId].length}`);
+    }
+
+    // Create file attachments for all sketches
+    const fileAttachments = this.selectedSketches[questionId].map((sketch, index) => ({
+      fileExtension: 'png',
+      file: this.surveyProcessService.cleanBase64String(sketch.data),
+      fileName: sketch.name
+    }));
+
+    const answerWithAttachments = {
+      fileAttachments: fileAttachments
+    };
+
     const control = this.getQuestionControl(questionId);
     if (control) {
-      control.setValue(sketchData);
+      control.setValue('sketches_uploaded');
       control.markAsDirty();
       control.markAsTouched();
     }
 
-    const question = this.findQuestionById(questionId);
-    if (question) {
-      // Create file attachment for sketch
-      const fileAttachment = {
-        fileExtension: 'png',
-        file: this.surveyProcessService.cleanBase64String(sketchData),
-        fileName: `sketch_${questionId}_${Date.now()}.png`
-      };
+    console.log(answerWithAttachments);
+    this.onQuestionAnswered(question, answerWithAttachments);
+  }
 
-      const answerWithAttachments = {
-        fileAttachments: [fileAttachment]
-      };
+  removeSketch(questionId: number, sketchIndex: number): void {
+    if (this.isReadOnly()) return;
 
-      console.log(answerWithAttachments);
-      this.onQuestionAnswered(question, answerWithAttachments);
-      console.log(`🎨 Sketch saved for question ${questionId}`);
+    if (this.selectedSketches[questionId] && this.selectedSketches[questionId].length > sketchIndex) {
+      this.selectedSketches[questionId].splice(sketchIndex, 1);
+      console.log(`🗑️ Sketch ${sketchIndex} removed from question ${questionId}`);
+
+      const question = this.findQuestionById(questionId);
+      if (!question) return;
+
+      if (this.selectedSketches[questionId].length === 0) {
+        // No sketches left, clear the form control
+        delete this.selectedSketches[questionId];
+        
+        const control = this.getQuestionControl(questionId);
+        if (control) {
+          control.setValue(null);
+          control.markAsDirty();
+        }
+        
+        this.onQuestionAnswered(question, null);
+      } else {
+        // Update with remaining sketches
+        const fileAttachments = this.selectedSketches[questionId].map((sketch, index) => ({
+          fileExtension: 'png',
+          file: this.surveyProcessService.cleanBase64String(sketch.data),
+          fileName: sketch.name
+        }));
+
+        const answerWithAttachments = {
+          fileAttachments: fileAttachments
+        };
+
+        const control = this.getQuestionControl(questionId);
+        if (control) {
+          control.setValue('sketches_uploaded');
+          control.markAsDirty();
+        }
+
+        this.onQuestionAnswered(question, answerWithAttachments);
+      }
     }
   }
 
@@ -1802,6 +1889,9 @@ private handleRatingValidationError(question: SurveyQuestion, answer: number, va
   clearSketch(questionId: number): void {
     if (this.isReadOnly()) return;
 
+    // Clear all sketches for the question
+    delete this.selectedSketches[questionId];
+
     const control = this.getQuestionControl(questionId);
     if (control) {
       control.setValue(null);
@@ -1812,8 +1902,20 @@ private handleRatingValidationError(question: SurveyQuestion, answer: number, va
     const question = this.findQuestionById(questionId);
     if (question) {
       this.onQuestionAnswered(question, null);
-      console.log(`🗑️ Sketch cleared for question ${questionId}`);
+      console.log(`🗑️ All sketches cleared for question ${questionId}`);
     }
+  }
+
+  getSelectedSketches(questionId: number): any[] {
+    return this.selectedSketches[questionId] || [];
+  }
+
+  getSelectedSketchesCount(questionId: number): number {
+    return this.selectedSketches[questionId] ? this.selectedSketches[questionId].length : 0;
+  }
+
+  hasSelectedSketches(questionId: number): boolean {
+    return !!(this.selectedSketches[questionId] && this.selectedSketches[questionId].length > 0);
   }
 
  

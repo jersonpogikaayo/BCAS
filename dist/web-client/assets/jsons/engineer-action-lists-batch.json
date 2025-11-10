@@ -1,0 +1,10 @@
+{
+    "assigned_jobs": ["Cannot Locate"],
+    "booked_jobs": ["Cannot Locate"],
+    "inprogress_jobs": ["Pause (Incomplete)", "Cannot Locate"],
+    "incomplete_jobs": ["Cannot Locate", "Download Excel", "Download PDF"],
+    "failed_jobs": ["Download Excel", "Download PDF"],
+    "pending_jobs": ["Sign Off Jobs", "Download Excel", "Download PDF"],
+    "completed_jobs": ["Download Excel", "Download PDF"],
+    "paused_jobs": ["Cannot Locate", "Download Excel", "Download PDF"]
+}

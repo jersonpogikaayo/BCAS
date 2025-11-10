@@ -1,0 +1,12 @@
+{
+    "unassigned": ["Assign (and book)", "Cancel", "Cannot Locate", "Raise Linked Job", "View Detail"],
+    "assigned": ["Reassign (and book)", "Unassign", "Cancel", "Cannot Locate", "Raise Linked Job", "View Detail"],
+    "booked": ["Reassign (and book)", "Unassign", "Raise Linked Job", "Cancel", "Cannot Locate", "View Detail"],
+    "inProgress": ["Reassign (and book)", "Pause (Incomplete)", "Raise Linked Job", "Cancel", "Cannot Locate", "View Detail"],
+    "paused": ["Reassign (and book)", "Raise Linked Job", "Unassign", "Cancel", "Cannot Locate", "View Detail", "Download Excel", "Download PDF"],
+    "incomplete": ["Reassign (and book)", "Raise Linked Job", "Unassign", "Cancel", "Cannot Locate", "View Detail", "Download Excel", "Download PDF"],
+    "failed": ["Raise Linked Job", "View Detail", "Download Excel", "Download PDF"],
+    "pending": ["Sign Off", "View Detail", "Download Excel", "Download PDF"],
+    "completed": ["Raise Linked Job", "View Detail", "Download Excel", "Download PDF"]
+}
+  

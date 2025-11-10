@@ -1,0 +1,81 @@
+[{
+        "prettyName": "Pickup Truck",
+        "technicalName": "pickup-truck"
+    },
+    {
+        "prettyName": "Pickup Truck with 12’ trailer",
+        "technicalName": "pickup-truck-with-12-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 14’ trailer",
+        "technicalName": "pickup-truck-with-14-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 16’ trailer",
+        "technicalName": "pickup-truck-with-16-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 18’ trailer",
+        "technicalName": "pickup-truck-with-18-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 20’ trailer",
+        "technicalName": "pickup-truck-with-20-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 25’ trailer",
+        "technicalName": "pickup-truck-with-25-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 30’ trailer",
+        "technicalName": "pickup-truck-with-30-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 35’ trailer",
+        "technicalName": "pickup-truck-with-35-trailer"
+    },
+    {
+        "prettyName": "Pickup Truck with 40’ trailer",
+        "technicalName": "pickup-truck-with-40-trailer"
+    },
+    {
+        "prettyName": "Cargo Van",
+        "technicalName": "cargo-van"
+    },
+    {
+        "prettyName": "Sprinter",
+        "technicalName": "sprinter"
+    },
+    {
+        "prettyName": "Sprinter High Roof",
+        "technicalName": "sprinter-high-roof"
+    },
+    {
+        "prettyName": "16’ Box Truck without lift gate",
+        "technicalName": "16-box-truck-without-lift-gate"
+    },
+    {
+        "prettyName": "16’ Box Truck with lift gate",
+        "technicalName": "16-box-truck-with-lift-gate"
+    },
+    {
+        "prettyName": "24’ Box Truck without lift gate",
+        "technicalName": "24-box-truck-without-lift-gate"
+    },
+    {
+        "prettyName": "24’ Box Truck with lift gate",
+        "technicalName": "24-box-truck-with-lift-gate"
+    },
+    {
+        "prettyName": "26’ Box Truck without lift gate",
+        "technicalName": "26-box-truck-without-lift-gate"
+    },
+    {
+        "prettyName": "26’ Box Truck with lift gate",
+        "technicalName": "26-box-truck-with-lift-gate"
+    },
+    {
+        "prettyName": "Stake Body",
+        "technicalName": "stake-body"
+    }
+]
